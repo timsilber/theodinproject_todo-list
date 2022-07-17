@@ -40,7 +40,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'todo!',
-            inject: 'body',
+            inject: 'head',
             template: './src/index.html',
             filename: 'index.html'
         })
