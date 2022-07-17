@@ -1,11 +1,12 @@
 body > * {
     border: 1px solid #000000;
+    background: #fef6e4;
 }
 
-* {
+/* * {
     background: #00000011;
     background-color: #00000011;
-}
+} */
 
 .todo > * {
     border: 1px solid black;
@@ -14,6 +15,17 @@ body > * {
 /* production start */
 * {
     box-sizing: border-box;
+}
+
+:root{
+    --main-color: #f3d2c1;
+    --highlight-color: #fef6e4;
+    --secondary-color: #8bd3dd;
+    --tertiary-color: #f582ae;
+    --button-color: #f582ae;
+    --paragraph-text-color: #172c66;
+    --headline-text-color: #001858;
+    --button-text-color: #001858;    
 }
 
 
@@ -30,44 +42,68 @@ body {
 
 .header {
     grid-area: header;
+    background: var(--highlight-color);
+    display: flex;
+    justify-items: space-between;
 }
 
 .sidebar {
     grid-area: sidebar;
+    background: var(--main-color);
 }
 
 .content {
     grid-area: content;
     display: flex;
     flex-direction: column;
+    gap: 1em;
+    padding: .5em;
 }
 
 .todo {
-    height: 200px;
+    border: 1px solid black;
+    border-radius: .6em;
     display: grid;
-    grid-template-columns: 1fr 9fr;
-    grid-template-rows: 1fr 3fr 1fr;
+    grid-template-columns: 5% 1fr;
+    grid-template-rows: min-content max-content min-content;
     grid-template-areas: 
     "done title"
-    "done description"
-    "done meta";
+    ". description"
+    ". meta";
+    cursor: pointer;
+}
+
+.hidden {
+    display:none;
 }
 
 .done{
     grid-area: done;
     display: grid;
-    align-items: start;
-    padding-top: .8em;
+    align-items: center;
 }
 
 .title{
     grid-area: title;
+    display: flex;
+    align-items: center;
+    padding: .5em .5em;
 }
 
 .description{
     grid-area: description;
+    display: none;
+    align-items: center;
+    padding: 1em .5em;
 }
 
 .meta{
     grid-area: meta;
+    display: none;
+    justify-content: space-around;
+    padding: .3em;
+}
+
+.show{
+    display: flex;
 }

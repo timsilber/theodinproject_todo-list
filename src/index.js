@@ -74,29 +74,57 @@ const displayToDo = (todo) => {
 
 function appendContent(content) {
     const contentContainer = document.querySelector('.content')
-    contentContainer.append(content)
+    contentContainer.append(content);
+    addClickListener(content);
+}
+
+
+function addClickListener(content) {
+    content.addEventListener('click', (e) => {
+
+        const todo = e.currentTarget
+
+        if (e.target.classList.contains('done')||e.target.type=='checkbox'){return}
+
+        const description = e.currentTarget.querySelector('.description')
+        const meta = e.currentTarget.querySelector('.meta')
+        const supInfo = [description, meta]
+
+        supInfo.forEach((item)=>{
+            item.classList.toggle('show')
+        })
+
+        if (description.classList.contains('show')){
+            console.log('hi')
+            window.addEventListener('click', (e2) => {
+                if (e2.currentTarget != todo){ 
+                    supInfo.forEach((item)=>{
+                        item.classList.remove('show')
+                    });
+                }
+            }, true)
+        }
+    });
 }
 
 
 const newToDo = new ToDo('lorem ipsum dolor sit amet', 'yes', 'tomorrow', 'high', 'no')
-const newToDo2 = new ToDo('lorem! ipsuom! Dolor!', ' impedit qui facere, sunt, voluptate', 'tomorrow2', 'high2', 'no2')
+const newToDo2 = new ToDo('lorem! ipsuom! Dolor!', ' Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?', 'tomorrow2', 'high2', 'no2')
 
-const newToDo3 = new ToDo('Lorem ipsum', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?', 'tomorrow3', 'high3', 'no3')
+const newToDo3 = new ToDo('Lorem ipsum', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?', 'tomorrow3', 'high3', 'no3')
 
-
+toDoList.add(newToDo)
 toDoList.add(newToDo2);
-
-
-appendContent(displayToDo(newToDo))
+toDoList.add(newToDo3);
 
 const displayToDos = (() => {
-    const content = document.querySelector('.content')
     for (let item of toDoList.list){
-        content.append(displayToDo(item));
+        console.log(item)
+        appendContent(displayToDo(item))
     }
 })();
 
-toDoList.add(newToDo3);
+
 console.log(toDoList)
 
 
