@@ -22,7 +22,7 @@ const Actions = {
 
 ToDo.prototype = Object.create(Actions)
 
-function ToDo(title, description = null, dueDate = null, priority = null, done=null){
+function ToDo(title, description = '', dueDate = '', priority = '', done=''){
 
     if (typeof Object.create !== 'function') {
         alert('YOU FORGOT TO USE NEW')
@@ -56,56 +56,74 @@ const toDoList = (()=>{
     return {add, list}
 })();
 
-const displayToDo = (todo) => {
-    const toDoDOM = `
-    <div class="done"><input type="checkbox"></div>
-    <div class="title">${todo.title}</div>
-    <div class="description">${todo.description}</div>
-    <div class="meta">
-        <div class="duedate">${todo.dueDate}</div>
-        <div class="priority">${todo.priority}</div>
-    </div>
-    `
-    const item = document.createElement('div')
-    item.classList.add('todo');
-    item.innerHTML = toDoDOM
-    return item
-}
+const toDoController = (()=>{
 
-function appendContent(content) {
-    const contentContainer = document.querySelector('.content')
-    contentContainer.append(content);
-    addClickListener(content);
-}
+    const displayToDo = (todo) => {
+        const toDoDOM = `
+        <div class="done"><input type="checkbox"></div>
+        <div class="title">${todo.title}</div>
+        <div class="description">${todo.description}</div>
+        <div class="meta">
+            <div class="duedate">${todo.dueDate}</div>
+            <div class="priority">${todo.priority}</div>
+        </div>
+        `
+        const item = document.createElement('div')
+        item.classList.add('todo');
+        item.innerHTML = toDoDOM
+        appendContent(item)
+    }
 
+    const appendContent = (content) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.append(content);
+        addClickListener(content);
+    }
 
-function addClickListener(content) {
-    content.addEventListener('click', (e) => {
+    const addClickListener = (content) => {
+        content.addEventListener('click', (e) => {
 
-        const todo = e.currentTarget
+            const todo = e.currentTarget
 
-        if (e.target.classList.contains('done')||e.target.type=='checkbox'){return}
+            if (e.target.classList.contains('done')||e.target.type=='checkbox'){return}
 
-        const description = e.currentTarget.querySelector('.description')
-        const meta = e.currentTarget.querySelector('.meta')
-        const supInfo = [description, meta]
+            const description = e.currentTarget.querySelector('.description')
+            const meta = e.currentTarget.querySelector('.meta')
+            const supInfo = [description, meta]
 
-        supInfo.forEach((item)=>{
-            item.classList.toggle('show')
-        })
+            supInfo.forEach((item)=>{
+                item.classList.toggle('show')
+            })
 
-        if (description.classList.contains('show')){
-            console.log('hi')
-            window.addEventListener('click', (e2) => {
-                if (e2.currentTarget != todo){ 
-                    supInfo.forEach((item)=>{
-                        item.classList.remove('show')
-                    });
-                }
-            }, true)
+            if (description.classList.contains('show')){
+                console.log('hi')
+                window.addEventListener('click', (e2) => {
+                    if (e2.currentTarget != todo){ 
+                        supInfo.forEach((item)=>{
+                            item.classList.remove('show')
+                        });
+                    }
+                }, true)
+            }
+        });
+    }
+
+    const displayToDos = () => {
+        for (let item of toDoList.list){
+            console.log(item)
+            displayToDo(item)
         }
-    });
-}
+    }
+
+    const addToDOM = (() => {
+        document.getElementById('new').onclick =()=>{
+        const blankToDo = new ToDo('')
+        displayToDo(blankToDo);
+        }
+    })();
+
+    return {displayToDos, displayToDo, addToDOM}
+})();
 
 
 const newToDo = new ToDo('lorem ipsum dolor sit amet', 'yes', 'tomorrow', 'high', 'no')
@@ -117,15 +135,10 @@ toDoList.add(newToDo)
 toDoList.add(newToDo2);
 toDoList.add(newToDo3);
 
-const displayToDos = (() => {
-    for (let item of toDoList.list){
-        console.log(item)
-        appendContent(displayToDo(item))
-    }
-})();
+
+toDoController.displayToDos();
 
 
-console.log(toDoList)
 
 
 // })(toDoList);
