@@ -6,12 +6,17 @@ module.exports = {
     entry: './src/index.js',
     
     output: {
-        filename: '[name].js',
-        path: path.resolve(__dirname, 'dist')
+        filename: '[name].[hash:8].js',
+        path: path.resolve(__dirname, 'dist'),
+        clean: true
     },
 
     module: {
         rules: [
+            {
+                test: /\.html$/i,
+                loader: "html-loader",
+              },
             {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader"]
