@@ -3,6 +3,7 @@ import './index.html'
 import './components/reset.css'
 import './components/fonts.css'
 import './styles.css'
+import inboxIcon from './images/inbox.svg'
 
 const Actions = {
     //setters
@@ -61,11 +62,11 @@ const toDoController = (()=>{
     const displayToDo = (todo) => {
         const toDoDOM = `
         <div class="done"><input type="checkbox"></div>
-        <div class="title">${todo.title}</div>
-        <div class="description">${todo.description}</div>
+        <div class="title"><p>${todo.title}</div>
+        <div class="description"><p>${todo.description}</div>
         <div class="meta">
-            <div class="duedate">${todo.dueDate}</div>
-            <div class="priority">${todo.priority}</div>
+            <div class="duedate"><p>${todo.dueDate}</div>
+            <div class="priority"><p>${todo.priority}</div>
         </div>
         `
         const item = document.createElement('div')
@@ -76,36 +77,53 @@ const toDoController = (()=>{
 
     const appendContent = (content) => {
         const contentContainer = document.querySelector('.content')
-        contentContainer.append(content);
-        addClickListener(content);
+        contentContainer.insertBefore(content, contentContainer.firstChild);
+        handleUserClick(content);
     }
 
-    const addClickListener = (content) => {
+    const handleUserClick = (content) => {
         content.addEventListener('click', (e) => {
 
             const todo = e.currentTarget
 
             if (e.target.classList.contains('done')||e.target.type=='checkbox'){return}
 
-            const description = e.currentTarget.querySelector('.description')
-            const meta = e.currentTarget.querySelector('.meta')
-            const supInfo = [description, meta]
+            expandToDo(todo);
+   
+           collapseToDo(todo);
 
-            supInfo.forEach((item)=>{
-                item.classList.toggle('show')
-            })
+           handleUserClick(todo)
+            
+        },{once:true});
+    }
 
-            if (description.classList.contains('show')){
-                console.log('hi')
-                window.addEventListener('click', (e2) => {
-                    if (e2.currentTarget != todo){ 
-                        supInfo.forEach((item)=>{
-                            item.classList.remove('show')
-                        });
-                    }
-                }, true)
-            }
-        });
+    const expandToDo = (todo) => {
+        const title = todo.querySelector('.title')
+        const description = todo.querySelector('.description')
+        const meta = todo.querySelector('.meta')
+
+        title.classList.toggle('show');
+        description.classList.toggle('show');
+
+        title.setAttribute('contenteditable', 'true');
+        title.focus()
+    }
+
+    const collapseToDo = (todo) =>{
+        const title = todo.querySelector('.title')
+        const description = todo.querySelector('.description')
+        const meta = todo.querySelector('.meta')
+
+        if (description.classList.contains('show')){
+            window.addEventListener('click', (e2) => {
+                if (e2.currentTarget !== todo){ 
+                    title.classList.remove('show');
+                    description.classList.remove('show');
+                    console.log(title.firstChild.textContent);
+                    title.setAttribute('contenteditable', 'false');
+                    };
+                },{once:true, capture:true})
+        }
     }
 
     const displayToDos = () => {
@@ -125,6 +143,15 @@ const toDoController = (()=>{
     return {displayToDos, displayToDo, addToDOM}
 })();
 
+
+const setHeader = () => {
+    const currentTab= document.querySelector('.currentTab')
+
+    currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
+    document.getElementById('new').innerHTML = 'Add to inbox'
+}
+
+setHeader();
 
 const newToDo = new ToDo('lorem ipsum dolor sit amet', 'yes', 'tomorrow', 'high', 'no')
 const newToDo2 = new ToDo('lorem! ipsuom! Dolor!', ' Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?', 'tomorrow2', 'high2', 'no2')

@@ -15,6 +15,11 @@ body > * {
 /* production start */
 * {
     box-sizing: border-box;
+    
+}
+
+div{
+    font-family: var(--paragraph-font);
 }
 
 :root{
@@ -25,31 +30,83 @@ body > * {
     --button-color: #f582ae;
     --paragraph-text-color: #172c66;
     --headline-text-color: #001858;
-    --button-text-color: #001858;    
+    --button-text-color: #001858;  
+    --header-font: 'proxima nova bold';
+    --paragraph-font: 'proxima nova regular'
 }
 
+h1, h2, h3, h4, h5 {
+    font-family: var(--header-font);
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+p {
+    font-family: var(--paragraph-font);
+}
+
+button {
+    font-family: var(--paragraph-font);
+    cursor:pointer;
+}
 
 body {
     margin: 0;
     height: 100vh;
     display: grid;
-    grid-template-rows: 1fr 8fr;
+    grid-template-rows: 1.5fr 1fr 9fr;
     grid-template-columns: minmax(220px,1fr) 5fr;
     grid-template-areas: 
+    "banner banner"
     "sidebar header"
     "sidebar content";
+}
+
+.banner {
+    grid-area: banner;
+    background-color: var(--main-color);
 }
 
 .header {
     grid-area: header;
     background: var(--highlight-color);
     display: flex;
-    justify-items: space-between;
+    justify-content: space-between;
+    align-items: center;
+    -webkit-user-select: none;       
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    user-select: none; 
 }
+
+.header button {
+    padding: .5em;
+    margin-right: 10%;
+}
+
+.currentTab{
+    display: grid;
+    place-items: center;
+    grid-auto-flow: column;
+    width: max-content;
+    padding: 1em;
+}
+
+.currentTab img {
+    width: 75px;
+    margin-right: 1em;
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;}
 
 .sidebar {
     grid-area: sidebar;
-    background: var(--main-color);
+    background: var(--highlight-color);
 }
 
 .content {
@@ -71,16 +128,22 @@ body {
     ". description"
     ". meta";
     cursor: pointer;
+    /* caret-color: transparent; */
+    -webkit-user-select: none;       
+    -moz-user-select: none; 
+    -ms-user-select: none; 
+    user-select: none; 
 }
 
-.hidden {
-    display:none;
+.title:focus{
+    outline: none;
 }
 
 .done{
     grid-area: done;
     display: grid;
     align-items: center;
+    min-width: min-content;
 }
 
 .title{
@@ -88,6 +151,7 @@ body {
     display: flex;
     align-items: center;
     padding: .5em .5em;
+    min-height: 2em;
 }
 
 .description{
@@ -102,6 +166,7 @@ body {
     display: none;
     justify-content: space-around;
     padding: .3em;
+    min-height: min-content;
 }
 
 .show{

@@ -49,12 +49,4 @@ module.exports = {
     optimization: {
         runtimeChunk: 'single',
       },
-      options: {
-        ...use.options,
-        esModule: false,
-        modules: {
-          exportLocalsConvention: "asIs",
-          namedExport: false,
-        },
-      },
 };
