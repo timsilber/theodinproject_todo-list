@@ -59,6 +59,7 @@ const toDoList = (()=>{
 
 const toDoController = (()=>{
 
+
     const displayToDo = (todo) => {
         const toDoDOM = `
         <div class="done"><input type="checkbox"></div>
@@ -81,6 +82,10 @@ const toDoController = (()=>{
         handleUserClick(content);
     }
 
+    const interactionTracker = () =>{
+        first = true
+    }
+
     const handleUserClick = (content) => {
         content.addEventListener('click', (e) => {
 
@@ -89,10 +94,15 @@ const toDoController = (()=>{
             if (e.target.classList.contains('done')||e.target.type=='checkbox'){return}
 
             expandToDo(todo);
+        
+            todo.addEventListener('click', (e)=>{
+                console.log(e.target)
+                 e.target.focus()
+            })
    
            collapseToDo(todo);
-
            handleUserClick(todo)
+
             
         },{once:true});
     }
@@ -102,11 +112,13 @@ const toDoController = (()=>{
         const description = todo.querySelector('.description')
         const meta = todo.querySelector('.meta')
 
-        title.classList.toggle('show');
-        description.classList.toggle('show');
+        description.classList.add('show');
+        meta.classList.add('show');
 
         title.setAttribute('contenteditable', 'true');
         title.focus()
+        description.setAttribute('contenteditable', 'true');
+        
     }
 
     const collapseToDo = (todo) =>{
@@ -116,14 +128,15 @@ const toDoController = (()=>{
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
-                if (e2.currentTarget !== todo){ 
-                    title.classList.remove('show');
+                if (e2.target.parentNode !== todo || e2.target.parentNode.parentNode !== todo){ 
                     description.classList.remove('show');
-                    console.log(title.firstChild.textContent);
+                    meta.classList.remove('show');
                     title.setAttribute('contenteditable', 'false');
+                    description.setAttribute('contenteditable', 'false');
                     };
-                },{once:true, capture:true})
+                },{ capture:true})
         }
+
     }
 
     const displayToDos = () => {
