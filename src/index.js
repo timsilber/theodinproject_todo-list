@@ -59,12 +59,11 @@ const toDoList = (()=>{
 
 const toDoController = (()=>{
 
-
     const displayToDo = (todo) => {
         const toDoDOM = `
         <div class="done"><input type="checkbox"></div>
-        <div class="title"><p>${todo.title}</div>
-        <div class="description"><p>${todo.description}</div>
+        <div class="title"><input type="text" value="${todo.title}"></input></div>
+        <div class="description"><textarea>${todo.description}</textarea></div>
         <div class="meta">
             <div class="duedate"><p>${todo.dueDate}</div>
             <div class="priority"><p>${todo.priority}</div>
@@ -82,62 +81,50 @@ const toDoController = (()=>{
         handleUserClick(content);
     }
 
-    const interactionTracker = () =>{
-        first = true
+    const findObject = (todo) =>{
+        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value
+        const todoObject= toDoList.list.find(obj => (obj.title == title && obj.description == description))
+            // 
+        return todoObject
     }
 
-    const handleUserClick = (content) => {
-        content.addEventListener('click', (e) => {
-
-            const todo = e.currentTarget
-
-            if (e.target.classList.contains('done')||e.target.type=='checkbox'){return}
-
-            expandToDo(todo);
-        
-            todo.addEventListener('click', (e)=>{
-                console.log(e.target)
-                 e.target.focus()
-            })
-   
-           collapseToDo(todo);
-           handleUserClick(todo)
-
-            
-        },{once:true});
+    const handleUserClick = (todo) => {
+        todo.addEventListener('click', (e) => {
+            const currentObject = findObject(todo)
+            if (e.target.classList.contains('done')|| e.target.type=='checkbox'){return}
+            expandToDo(todo); 
+            collapseToDo(todo, currentObject);
+        });
     }
 
     const expandToDo = (todo) => {
-        const title = todo.querySelector('.title')
-        const description = todo.querySelector('.description')
-        const meta = todo.querySelector('.meta')
-
+        const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         description.classList.add('show');
-        meta.classList.add('show');
-
-        title.setAttribute('contenteditable', 'true');
-        title.focus()
-        description.setAttribute('contenteditable', 'true');
-        
+        meta.classList.add('show');      
     }
 
-    const collapseToDo = (todo) =>{
+    const updateObject = (todo, currentObject) => {
+        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value
+        currentObject.setTitle(title)
+        currentObject.setDescription(description)
+    }
+
+    const collapseToDo = (todo, currentObject) =>{
         const title = todo.querySelector('.title')
         const description = todo.querySelector('.description')
         const meta = todo.querySelector('.meta')
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
-                if (e2.target.parentNode !== todo || e2.target.parentNode.parentNode !== todo){ 
+                if (!todo.contains(e2.target)){ 
+                    updateObject(todo, currentObject);
                     description.classList.remove('show');
                     meta.classList.remove('show');
-                    title.setAttribute('contenteditable', 'false');
-                    description.setAttribute('contenteditable', 'false');
-                    };
-                },{ capture:true})
+                };
+                },{once: true, capture:true})
         }
-
     }
+
 
     const displayToDos = () => {
         for (let item of toDoList.list){

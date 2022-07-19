@@ -135,6 +135,27 @@ body {
     user-select: none; 
 }
 
+/* .todo textarea {
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: var(--paragraph-font);
+    resize: none;  
+    font-size: 1rem;  
+    height: min-content;
+} */
+
+.todo input[type|='text']{
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: var(--paragraph-font);
+    resize: none;  
+    font-size: 1rem;  
+}
+
 .title:focus{
     outline: none;
 }
@@ -151,7 +172,7 @@ body {
     display: flex;
     align-items: center;
     padding: .5em .5em;
-    min-height: 2em;
+    height: min-content;
 }
 
 .description{
@@ -159,6 +180,17 @@ body {
     display: none;
     align-items: center;
     padding: 1em .5em;
+}
+
+.description textarea {
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: var(--paragraph-font);
+    cursor: pointer;
+    font-size: 1rem;  
+    resize: none;  
 }
 
 .meta{
