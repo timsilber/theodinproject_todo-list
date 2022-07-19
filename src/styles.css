@@ -15,7 +15,6 @@ body > * {
 /* production start */
 * {
     box-sizing: border-box;
-    
 }
 
 div{
@@ -31,6 +30,7 @@ div{
     --paragraph-text-color: #172c66;
     --headline-text-color: #001858;
     --button-text-color: #001858;  
+    --stroke: #001858;
     --header-font: 'proxima nova bold';
     --paragraph-font: 'proxima nova regular'
 }
@@ -52,6 +52,15 @@ button {
     cursor:pointer;
 }
 
+img {    
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
 body {
     margin: 0;
     height: 100vh;
@@ -67,6 +76,20 @@ body {
 .banner {
     grid-area: banner;
     background-color: var(--main-color);
+    display: flex;
+    align-items: center;
+}
+
+.banner img {
+    height: 100px;
+    margin-left: 1em;
+    margin-top: .5em;
+    cursor: pointer;
+}
+
+.banner h1{
+    font-family: ccbiffbamboomoutline;
+    font-size: 2.5rem;
 }
 
 .header {
@@ -95,14 +118,9 @@ body {
 }
 
 .currentTab img {
-    width: 75px;
-    margin-right: 1em;
-    user-drag: none;
-    -webkit-user-drag: none;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;}
+    width: 50px;
+    margin-right: .5em;
+}
 
 .sidebar {
     grid-area: sidebar;
@@ -128,23 +146,11 @@ body {
     ". description"
     ". meta";
     cursor: pointer;
-    /* caret-color: transparent; */
     -webkit-user-select: none;       
     -moz-user-select: none; 
     -ms-user-select: none; 
     user-select: none; 
 }
-
-/* .todo textarea {
-    background: transparent;
-    width: 100%;
-    border: none;
-    outline: none;
-    font-family: var(--paragraph-font);
-    resize: none;  
-    font-size: 1rem;  
-    height: min-content;
-} */
 
 .todo input[type|='text']{
     background: transparent;
@@ -154,6 +160,7 @@ body {
     font-family: var(--paragraph-font);
     resize: none;  
     font-size: 1rem;  
+    cursor: pointer;
 }
 
 .title:focus{
@@ -188,9 +195,9 @@ body {
     border: none;
     outline: none;
     font-family: var(--paragraph-font);
-    cursor: pointer;
     font-size: 1rem;  
     resize: none;  
+    height:auto;
 }
 
 .meta{
@@ -199,6 +206,24 @@ body {
     justify-content: space-around;
     padding: .3em;
     min-height: min-content;
+}
+
+.todo input[type|='date']{
+    background: var(--button-color);
+    color: var(--button-text-color);
+    padding: .2em .5em;
+    font: var(--paragraph-font);
+    border: none;
+    border-radius: .2em;
+    border: 2px solid var(--stroke);
+    font-size: .8rem;
+}
+
+input::-webkit-datetime-edit-day-field:focus,
+input::-webkit-datetime-edit-month-field:focus,
+input::-webkit-datetime-edit-year-field:focus {
+    background-color: var(--highlight-color);
+    outline: none;
 }
 
 .show{

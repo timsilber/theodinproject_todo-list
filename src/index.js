@@ -54,8 +54,17 @@ const toDoList = (()=>{
         list.push(todo)
     }
 
-    return {add, list}
+    const getObject = (todo) =>{
+        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value
+        const todoObject= list.find(obj => (obj.title == title && obj.description == description))
+            
+        return todoObject
+    }
+
+    return {add, list, getObject}
 })();
+
+
 
 const toDoController = (()=>{
 
@@ -65,9 +74,8 @@ const toDoController = (()=>{
         <div class="title"><input type="text" value="${todo.title}"></input></div>
         <div class="description"><textarea>${todo.description}</textarea></div>
         <div class="meta">
-            <div class="duedate"><p>${todo.dueDate}</div>
-            <div class="priority"><p>${todo.priority}</div>
-        </div>
+            <input type="date" value="${todo.dueDate}"></input>
+            <div class="priority">${todo.priority}</div>
         `
         const item = document.createElement('div')
         item.classList.add('todo');
@@ -78,41 +86,47 @@ const toDoController = (()=>{
     const appendContent = (content) => {
         const contentContainer = document.querySelector('.content')
         contentContainer.insertBefore(content, contentContainer.firstChild);
-        handleUserClick(content);
+        handleUserInteraction(content);
     }
 
-    const findObject = (todo) =>{
-        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value
-        const todoObject= toDoList.list.find(obj => (obj.title == title && obj.description == description))
-            // 
-        return todoObject
-    }
-
-    const handleUserClick = (todo) => {
+    const handleUserInteraction= (todo) => {
+        const currentObject = toDoList.getObject(todo)
+        window.addEventListener('resize', ()=>{
+            resizeTextArea(todo);
+        });
+        todo.addEventListener('input', () => {
+            resizeTextArea(todo);
+        });
         todo.addEventListener('click', (e) => {
-            const currentObject = findObject(todo)
+            console.log(currentObject)
             if (e.target.classList.contains('done')|| e.target.type=='checkbox'){return}
-            expandToDo(todo); 
+            expandToDo(todo, e.target); 
             collapseToDo(todo, currentObject);
         });
     }
 
-    const expandToDo = (todo) => {
+    const expandToDo = (todo, target) => {
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         description.classList.add('show');
-        meta.classList.add('show');      
+        meta.classList.add('show'); 
+        resizeTextArea(todo);
+    }
+
+    function resizeTextArea(todo){
+        const textarea = todo.querySelector('textarea')
+        textarea.style.height = '5px'
+        textarea.style.height= textarea.scrollHeight+"px"
     }
 
     const updateObject = (todo, currentObject) => {
-        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value
+        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value, dueDate = todo.querySelector('input[type|="date"]').value
         currentObject.setTitle(title)
         currentObject.setDescription(description)
+        currentObject.setdueDate(dueDate)
     }
 
     const collapseToDo = (todo, currentObject) =>{
-        const title = todo.querySelector('.title')
-        const description = todo.querySelector('.description')
-        const meta = todo.querySelector('.meta')
+        const title = todo.querySelector('.title'), description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
@@ -124,7 +138,6 @@ const toDoController = (()=>{
                 },{once: true, capture:true})
         }
     }
-
 
     const displayToDos = () => {
         for (let item of toDoList.list){
