@@ -70,12 +70,21 @@ const toDoController = (()=>{
 
     const displayToDo = (todo) => {
         const toDoDOM = `
-        <div class="done"><input type="checkbox"></div>
+        <div class="done">
+            <input type="checkbox">
+        </div>
         <div class="title"><input type="text" value="${todo.title}"></input></div>
         <div class="description"><textarea>${todo.description}</textarea></div>
         <div class="meta">
             <input type="date" value="${todo.dueDate}"></input>
-            <div class="priority">${todo.priority}</div>
+            <div class="priority">
+                <select class="classic" value='${todo.priority}'>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                </select>
+            </div>
+        </div>
         `
         const item = document.createElement('div')
         item.classList.add('todo');
