@@ -23,7 +23,7 @@ const Actions = {
 
 ToDo.prototype = Object.create(Actions)
 
-function ToDo(title, description = '', dueDate = '', priority = '', done=''){
+function ToDo(title, description = '', dueDate = '', priority = '', done='', createdAt=''){
 
     if (typeof Object.create !== 'function') {
         alert('YOU FORGOT TO USE NEW')
@@ -34,37 +34,35 @@ function ToDo(title, description = '', dueDate = '', priority = '', done=''){
     this.dueDate = dueDate
     this.priority = priority
     this.done = done
-
-//if we want to just return new object 
-    // if (typeof Object.create !== 'function') {
-    //     Object.create = function (o) {
-    //         function F() {}
-    //         F.prototype = o;
-    //         return new F();
-    //     };
+    this.createdAt = createdAt
 }
 
-const toDoList = (()=>{
+const toDoList = (()=> {
 
     const list = []
-
-    const getList = () => list
 
     const add = (todo) => {
         list.push(todo)
     }
 
     const getObject = (todo) =>{
-        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value
-        const todoObject= list.find(obj => (obj.title == title && obj.description == description))
+        const createdAt = todo.querySelector('input[type|="hidden"]').value
+        const todoObject= list.find(obj => (obj.createdAt == createdAt))
             
         return todoObject
     }
 
-    return {add, list, getObject}
+    const writeToLocalStorage = () => {
+        localStorage.setItem("toDos", JSON.stringify(list));
+    }
+
+    const getFromLocalStorage = () => {
+        let storedNames = JSON.parse(localStorage.getItem("toDos"));
+        return storedNames
+    }
+
+    return {add, list, getObject, writeToLocalStorage, getFromLocalStorage}
 })();
-
-
 
 const toDoController = (()=>{
 
@@ -84,6 +82,7 @@ const toDoController = (()=>{
                     <option>Low</option>
                 </select>
             </div>
+            <input type="hidden" value="${todo.createdAt}"></input>
         </div>
         `
         const item = document.createElement('div')
@@ -107,7 +106,6 @@ const toDoController = (()=>{
             resizeTextArea(todo);
         });
         todo.addEventListener('click', (e) => {
-            console.log(currentObject)
             if (e.target.classList.contains('done')|| e.target.type=='checkbox'){return}
             expandToDo(todo, e.target); 
             collapseToDo(todo, currentObject);
@@ -135,14 +133,20 @@ const toDoController = (()=>{
     }
 
     const collapseToDo = (todo, currentObject) =>{
-        const title = todo.querySelector('.title'), description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
+        const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
                 if (!todo.contains(e2.target)){ 
-                    updateObject(todo, currentObject);
                     description.classList.remove('show');
                     meta.classList.remove('show');
+                    if (currentObject){
+                        updateObject(todo, currentObject)
+                    }else{
+                        currentObject = toDoList.getObject(todo)
+                        updateObject(todo, currentObject)
+                    }
+                    toDoList.writeToLocalStorage(toDoList.list)
                 };
                 },{once: true, capture:true})
         }
@@ -150,14 +154,17 @@ const toDoController = (()=>{
 
     const displayToDos = () => {
         for (let item of toDoList.list){
-            console.log(item)
-            displayToDo(item)
+            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            displayToDo(objectFromString);
         }
     }
 
     const addToDOM = (() => {
         document.getElementById('new').onclick =()=>{
         const blankToDo = new ToDo('')
+        blankToDo.createdAt = new Date()
+        toDoList.add(blankToDo);
+        console.log(toDoList.list)
         displayToDo(blankToDo);
         }
     })();
@@ -168,27 +175,56 @@ const toDoController = (()=>{
 
 const setHeader = () => {
     const currentTab= document.querySelector('.currentTab')
-
     currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
     document.getElementById('new').innerHTML = 'Add to inbox'
 }
 
+window.onload = () =>{
+    let stringList = toDoList.getFromLocalStorage();
+    for (let item of stringList){
+    const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+        toDoList.add(stringToObject)
+    }
+    toDoController.displayToDos();
+
+}
+
 setHeader();
 
-const newToDo = new ToDo('lorem ipsum dolor sit amet', 'yes', 'tomorrow', 'high', 'no')
-const newToDo2 = new ToDo('lorem! ipsuom! Dolor!', ' Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?', 'tomorrow2', 'high2', 'no2')
-
-const newToDo3 = new ToDo('Lorem ipsum', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex illo accusamus at odit dignissimos velit, impedit qui facere, sunt, voluptate id nobis molestiae a est?', 'tomorrow3', 'high3', 'no3')
-
-toDoList.add(newToDo)
-toDoList.add(newToDo2);
-toDoList.add(newToDo3);
-
-
-toDoController.displayToDos();
 
 
 
+// function storageAvailable(type) {
+//     let storage;
+//     try {
+//         storage = window[type];
+//         const x = '__storage_test__';
+//         storage.setItem(x, x);
+//         storage.removeItem(x);
+//         return true;
+//     }
+//     catch(e) {
+//         return e instanceof DOMException && (
+//             // everything except Firefox
+//             e.code === 22 ||
+//             // Firefox
+//             e.code === 1014 ||
+//             // test name field too, because code might not be present
+//             // everything except Firefox
+//             e.name === 'QuotaExceededError' ||
+//             // Firefox
+//             e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+//             // acknowledge QuotaExceededError only if there's something already stored
+//             (storage && storage.length !== 0);
+//     }
+// }
+
+// if (storageAvailable('localStorage')) {
+//     console.log('yes')  
+// }
+//   else {
+//     console.log('no')
+//   }
 
 // })(toDoList);
 
