@@ -187,7 +187,9 @@ nav img{
     background: var(--main-color);
     box-shadow: #00185829 0px 2px 8px 0px;
     padding: .5em;
+    z-index: 1;
 }
+
 
 .todo input[type|='text']{
     background: transparent;
@@ -252,10 +254,27 @@ nav img{
     align-items: center;
     padding: .5em .5em;
     height: min-content;
+    position: relative;
 }
 
 .title input[type="text"]{
     color: var(--paragraph-text-color);
+    height: auto;
+    /* font-family: var(--header-font); */
+    font-size: 1rem;
+}
+
+.title img {
+    position: absolute;
+    right:0;
+    margin-right: 1em;
+    height: 1.3em;
+    display: none;
+}
+
+
+.todo:hover img{
+    display: block;
 }
 
 .description{
@@ -294,6 +313,11 @@ nav img{
     border-radius: .2em;
     border: 2px solid var(--stroke);
     font-size: 1rem;
+    cursor: pointer;
+}
+
+input[type|='date']:focus{
+    outline: none;
 }
 
 input::-webkit-datetime-edit-day-field:focus,

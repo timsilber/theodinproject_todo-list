@@ -4,6 +4,7 @@ import './components/reset.css'
 import './components/fonts.css'
 import './styles.css'
 import inboxIcon from './images/inbox.svg'
+import trashIcon from './images/delete.svg'
 
 const Actions = {
     //setters
@@ -12,13 +13,6 @@ const Actions = {
     setDescription(newDescription){this.description = newDescription},
     setPriority(newPriority){this.priority = newPriority},
     setDone(newDone){this.done = newDone},
-
-    //getters (let's see if we'll use them?)
-    getTitle(){return this.title},
-    getdueDate(){return this.dueDate},
-    getDescription(){return this.description},
-    getPriority(){return this.priority},
-    getDone(){return this.done},
 }
 
 ToDo.prototype = Object.create(Actions)
@@ -37,6 +31,22 @@ function ToDo(title, description = '', dueDate = '', priority = '', done='', cre
     this.createdAt = createdAt
 }
 
+const trashList = (()=>{
+
+    const list = []
+
+    const add = (todo) => {
+        list.push(todo)
+    }
+
+    const writeToLocalStorage = () => {
+        localStorage.setItem("trash", JSON.stringify(list));
+    }
+
+    return {list, add, writeToLocalStorage}
+
+})();
+
 const toDoList = (()=> {
 
     const list = []
@@ -48,7 +58,6 @@ const toDoList = (()=> {
     const getObject = (todo) =>{
         const createdAt = todo.querySelector('input[type|="hidden"]').value
         const todoObject= list.find(obj => (obj.createdAt == createdAt))
-            
         return todoObject
     }
 
@@ -71,7 +80,10 @@ const toDoController = (()=>{
         <div class="done">
             <input type="checkbox">
         </div>
-        <div class="title"><input type="text" value="${todo.title}"></input></div>
+        <div class="title">
+            <input type="text" value="${todo.title}"></input>
+            <img src="${trashIcon}" class="delete">
+        </div>
         <div class="description"><textarea>${todo.description}</textarea></div>
         <div class="meta">
             <input type="date" value="${todo.dueDate}"></input>
@@ -87,6 +99,7 @@ const toDoController = (()=>{
         `
         const item = document.createElement('div')
         item.classList.add('todo');
+        item.setAttribute('draggable', 'true')
         item.innerHTML = toDoDOM
         appendContent(item)
     }
@@ -97,8 +110,26 @@ const toDoController = (()=>{
         handleUserInteraction(content);
     }
 
+    const deleteObject = (currentObject, todo) => {
+        const index = toDoList.list.findIndex(object => {
+            return object === currentObject;
+        });
+
+        trashList.add(toDoList.list[index]);
+        toDoList.list.splice(index, 1)
+        toDoList.writeToLocalStorage();
+        trashList.writeToLocalStorage();
+        todo.remove()
+    }
+
     const handleUserInteraction= (todo) => {
         const currentObject = toDoList.getObject(todo)
+        const deleteIcon = todo.querySelector('.delete')
+        
+        deleteIcon.addEventListener('click', () => {
+            deleteObject(currentObject, todo);
+        })
+
         window.addEventListener('resize', ()=>{
             resizeTextArea(todo);
         });
@@ -111,7 +142,7 @@ const toDoController = (()=>{
             collapseToDo(todo, currentObject);
         });
     }
-
+    
     const expandToDo = (todo, target) => {
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         description.classList.add('show');
@@ -140,12 +171,7 @@ const toDoController = (()=>{
                 if (!todo.contains(e2.target)){ 
                     description.classList.remove('show');
                     meta.classList.remove('show');
-                    if (currentObject){
-                        updateObject(todo, currentObject)
-                    }else{
-                        currentObject = toDoList.getObject(todo)
-                        updateObject(todo, currentObject)
-                    }
+                    updateObject(todo, currentObject)
                     toDoList.writeToLocalStorage(toDoList.list)
                 };
                 },{once: true, capture:true})
@@ -164,7 +190,7 @@ const toDoController = (()=>{
         const blankToDo = new ToDo('')
         blankToDo.createdAt = new Date()
         toDoList.add(blankToDo);
-        console.log(toDoList.list)
+        toDoList.writeToLocalStorage();
         displayToDo(blankToDo);
         }
     })();
