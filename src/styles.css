@@ -71,7 +71,7 @@ body {
     background: var(high);
     display: flex;
     align-items: center;
-    box-shadow: #00185829 0px 2px 8px 0px;
+    /* box-shadow: #00185829 0px 2px 8px 0px; */
     z-index: 1;
     border-bottom: 2px solid var(--stroke);
     display: grid;
@@ -83,11 +83,6 @@ body {
     margin-top: .5em;
     margin-bottom: .5em;
     cursor: pointer;
-}
-
-.banner h1{
-    font-family: ccbiffbamboomoutline;
-    font-size: 2.5rem;
 }
 
 .header {
@@ -105,7 +100,7 @@ body {
 
 .header button {
     margin-right: 10%;
-    font-size: .9rem;
+    font-size: 1rem;
 }
 
 .currentTab{
@@ -129,9 +124,8 @@ body {
 }
 
 nav {
-    display: grid;
-    margin-top: .5em;
-    font-size: 1.2rem;
+    margin-top: 1em;
+    font-size: 1.3rem;
     color: var(--headline-text-color);
 }
 
@@ -149,6 +143,12 @@ nav ul div{
 }
 
 nav ul div:hover{
+    display: flex;
+    align-items: center;
+    background: var(--highlight-color);
+}
+
+nav ul div:-moz-drag-over{
     display: flex;
     align-items: center;
     background: var(--highlight-color);
@@ -188,18 +188,7 @@ nav img{
     box-shadow: #00185829 0px 2px 8px 0px;
     padding: .5em;
     z-index: 1;
-}
-
-
-.todo input[type|='text']{
-    background: transparent;
-    width: 100%;
-    border: none;
-    outline: none;
-    font-family: var(--paragraph-font);
-    resize: none;  
-    font-size: 1rem;  
-    cursor: pointer;
+    transition: all .8s cubic-bezier(0.42, 0, 0.15, 1.4);
 }
 
 .done{
@@ -248,6 +237,7 @@ nav img{
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
 
+
 .title{
     grid-area: title;
     display: flex;
@@ -260,8 +250,19 @@ nav img{
 .title input[type="text"]{
     color: var(--paragraph-text-color);
     height: auto;
-    /* font-family: var(--header-font); */
     font-size: 1rem;
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: var(--paragraph-font);
+    resize: none;  
+    font-size: 1rem;  
+    cursor: pointer;
+}
+
+.title input[type="text"]::placeholder{
+    color: #172c6681;
 }
 
 .title img {
@@ -271,7 +272,6 @@ nav img{
     height: 1.3em;
     display: none;
 }
-
 
 .todo:hover img{
     display: block;
@@ -292,8 +292,14 @@ nav img{
     font-family: var(--paragraph-font);
     font-size: 1rem;  
     resize: none;  
-    height:auto;
-    color: var(--paragraph-text-color)
+    color: var(--paragraph-text-color);
+    overflow: hidden;
+    transition: height .8s cubic-bezier(0.42, 0, 0.15, 1.4);
+    min-height: 1px;
+}
+
+.description textarea::placeholder{
+    color: #172c6681;
 }
 
 .meta{
