@@ -39,11 +39,24 @@ const trashList = (()=>{
         list.push(todo)
     }
 
+    const getFromLocalStorage = () => {
+        let storedNames = JSON.parse(localStorage.getItem("trash"));
+        return storedNames
+    }
+
     const writeToLocalStorage = () => {
         localStorage.setItem("trash", JSON.stringify(list));
     }
 
-    return {list, add, writeToLocalStorage}
+    const loadToDos = () => {
+        let stringList = getFromLocalStorage();
+        for (let item of stringList){
+            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            trashList.add(stringToObject);
+        }
+    } 
+
+    return {list, add, writeToLocalStorage, loadToDos}
 
 })();
 
@@ -70,7 +83,15 @@ const toDoList = (()=> {
         return storedNames
     }
 
-    return {add, list, getObject, writeToLocalStorage, getFromLocalStorage}
+    const loadToDos = () => {
+        let stringList = getFromLocalStorage();
+        for (let item of stringList){
+            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoList.add(stringToObject);
+        }
+    } 
+
+    return {add, list, getObject, writeToLocalStorage, loadToDos}
 })();
 
 
@@ -114,16 +135,21 @@ const toDoController = (()=>{
         handleUserInteraction(content);
     }
 
-    const deleteObject = (currentObject, todo) => {
+    const deleteToDo = (currentObject, todo) => {
         const index = toDoList.list.findIndex(object => {
             return object === currentObject;
         });
+
+        if (!currentObject && trashList.list(contains(currentObject))){
+            console.log('yes')
+        }
 
         trashList.add(toDoList.list[index]);
         toDoList.list.splice(index, 1);
         toDoList.writeToLocalStorage();
         trashList.writeToLocalStorage();
         todo.remove();
+        console.log(trashList.list)
     }
 
     const handleUserInteraction= (todo) => {
@@ -131,7 +157,7 @@ const toDoController = (()=>{
         const deleteIcon = todo.querySelector('.delete')
         
         deleteIcon.addEventListener('click', () => {
-            deleteObject(currentObject, todo);
+            deleteToDo(currentObject, todo);
         })
 
         window.addEventListener('resize', ()=>{
@@ -195,19 +221,15 @@ const toDoController = (()=>{
     const handleDrop = (() => {
         const trash = document.getElementById('trash')
         trash.addEventListener('drop', (e) => {
-            trash.addEventListener('dragenter', ()=>{
-                trash.style.background = '#fef6e4'
-            })
-            trash.addEventListener('dragleave', ()=>{
-                trash.style.background = 'none'
-            })
             const trashyObject = document.getElementById(e.dataTransfer.getData('text/plain'))
-            toDoController.deleteObject(toDoList.getObject(trashyObject), trashyObject)
+            toDoController.deleteToDo(toDoList.getObject(trashyObject), trashyObject)
         })
     })();
 
-    const displayToDos = () => {
-        for (let item of toDoList.list){
+    const displayToDos = (list) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.innerHTML = ''
+        for (let item of list){
             const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             displayToDo(objectFromString);
         }
@@ -216,7 +238,10 @@ const toDoController = (()=>{
     const addToDOM = (() => {
         document.getElementById('new').onclick =()=>{
             const blankToDo = new ToDo('')
-            blankToDo.createdAt = new Date()
+            let datetime = new Date() 
+            datetime += datetime.getMilliseconds()
+            blankToDo.createdAt = datetime
+
             toDoList.add(blankToDo);
             toDoList.writeToLocalStorage();
             const item = displayToDo(blankToDo);
@@ -224,7 +249,7 @@ const toDoController = (()=>{
         }
     })();
 
-    return {displayToDos, displayToDo, addToDOM, deleteObject}
+    return {displayToDos, displayToDo, addToDOM, deleteToDo}
 })();
 
 
@@ -234,17 +259,23 @@ const setHeader = () => {
     document.getElementById('new').innerHTML = 'Add to inbox'
 }
 
-
 window.onload = () =>{
-    let stringList = toDoList.getFromLocalStorage();
-    for (let item of stringList){
-    const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-        toDoList.add(stringToObject);
-    }
-    toDoController.displayToDos();
+    toDoList.loadToDos();
+    toDoController.displayToDos(toDoList.list);
+    trashList.loadToDos();
 }
 
+document.getElementById('trash').addEventListener('click', () => {
+    toDoController.displayToDos(trashList.list);
+})
+
+document.getElementById('inbox').addEventListener('click', ()=> {
+    toDoController.displayToDos(toDoList.list);
+})
+
 setHeader();
+
+
 
 
 
