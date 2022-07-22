@@ -246,7 +246,7 @@ const toDoController = (()=>{
             toDoList.writeToLocalStorage();
             trashList.writeToLocalStorage();
             todo.remove(); 
-        }, 400)
+        }, 275)
     }
 
     const completeToDo = (currentObject, todo) => {
