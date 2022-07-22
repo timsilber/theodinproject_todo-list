@@ -70,7 +70,6 @@ const trashList = (()=>{
         for (let item of list){
             const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             toDoController.toDoDOM(objectFromString);
-            console.log(item)
         }
     }
 
@@ -112,7 +111,8 @@ const completedList = (()=> {
         let stringList = getFromLocalStorage();
         for (let item of stringList){
             const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            toDoList.add(stringToObject);
+            add(stringToObject);
+            console.log(item)
         }
     } 
 
@@ -123,6 +123,10 @@ const completedList = (()=> {
             const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             toDoController.toDoDOM(objectFromString);
         }
+        const completedToDos = [...document.querySelectorAll('.todo')]
+        completedToDos.forEach((item) => {
+            item.querySelector('input[type|="checkbox').checked = true
+        });
     }
 
 
@@ -239,26 +243,39 @@ const toDoController = (()=>{
         const index = toDoList.list.findIndex(object => {
             return object === currentObject;
         });
+
+        todo.querySelector('.description').classList.remove('show')
+        todo.querySelector('.meta').classList.remove('show')
+
+        trashList.add(toDoList.list[index]);
+        toDoList.list.splice(index, 1);
+        toDoList.writeToLocalStorage();
+        trashList.writeToLocalStorage();
+
         todo.classList.add('zoom')
         setTimeout(()=>{
-            trashList.add(toDoList.list[index]);
-            toDoList.list.splice(index, 1);
-            toDoList.writeToLocalStorage();
-            trashList.writeToLocalStorage();
             todo.remove(); 
-        }, 275)
+        }, 500)
     }
 
     const completeToDo = (currentObject, todo) => {
         const index = toDoList.list.findIndex(object => {
             return object === currentObject;
         });
-            currentObject.setDone(true);
-            setTimeout(()=>{
-            completedList.add(toDoList.list[index]);
-            toDoList.list.splice(index, 1);
-            toDoList.writeToLocalStorage();
-            completedList.writeToLocalStorage();
+
+        todo.querySelector('.description').classList.remove('show')
+        todo.querySelector('.meta').classList.remove('show')
+        
+        currentObject.setDone(true);
+        completedList.add(toDoList.list[index]);
+        toDoList.list.splice(index, 1);
+        toDoList.writeToLocalStorage();
+        completedList.writeToLocalStorage();
+
+        setTimeout(()=>{
+            todo.classList.add('slide-out')
+        }, 200)
+        setTimeout(()=>{
             todo.remove(); 
         }, 500)
     }
@@ -270,7 +287,6 @@ const toDoController = (()=>{
 
         checkbox.addEventListener('change', (event) => {
         if (event.currentTarget.checked) {
-
             completeToDo(currentObject, todo);       
         } else {
             alert('not checked');
@@ -290,7 +306,9 @@ const toDoController = (()=>{
 
         todo.addEventListener('click', (e) => {
             const checkbox = todo.querySelector('input[type="checkbox"]');
-            if (e.target != checkbox && e.target != todo.querySelector('.done')){
+            const trashIcon = todo.querySelector('.delete')
+
+            if (e.target != checkbox && e.target != todo.querySelector('.done') && e.target !=trashIcon){
                 expandToDo(todo, e.target);
             }
             collapseToDo(todo, currentObject);
@@ -377,6 +395,8 @@ window.onload = () =>{
         toDoList.loadToDos();
         toDoList.displayToDos(toDoList.list);
         trashList.loadToDos();
+        completedList.loadToDos();
+        console.log(completedList.list)
     } catch (error) {
         console.log('no todos to load')
     }

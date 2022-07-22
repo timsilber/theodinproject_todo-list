@@ -380,6 +380,10 @@ select {
     animation: zoom forwards 1s ease-out 1;
   }
 
+  .slide-out{
+    animation: slideAway forwards 1s ease-in 1;
+  }
+
   @keyframes zoom { 
     0% {
       transform: scale(1);
@@ -397,4 +401,14 @@ select {
       width: 0;
       transform: scale(0);
     }
+  }
+
+  @keyframes slideAway { 
+    0% {
+    }
+
+    100% {
+    transform: translateX(800%);    
+    opacity: 50;
+}
   }
