@@ -179,7 +179,7 @@ const toDoList = (()=> {
     return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains}
 })();
 
-
+//handles all DOM interactions with individual toDos
 const toDoController = (()=>{
 
     const addToDOM = (() => {
@@ -247,6 +247,20 @@ const toDoController = (()=>{
         todo.remove(); 
     }
 
+    const completeToDo = (currentObject, todo) => {
+        const index = toDoList.list.findIndex(object => {
+            return object === currentObject;
+        });
+            currentObject.setDone(true);
+            setTimeout(()=>{
+            completedList.add(toDoList.list[index]);
+            toDoList.list.splice(index, 1);
+            toDoList.writeToLocalStorage();
+            completedList.writeToLocalStorage();
+            todo.remove(); 
+        }, 500)
+    }
+
     const handleUserInteraction= (todo) => {
         const currentObject = toDoList.getObject(todo)
         const deleteIcon = todo.querySelector('.delete')
@@ -254,7 +268,8 @@ const toDoController = (()=>{
 
         checkbox.addEventListener('change', (event) => {
         if (event.currentTarget.checked) {
-            alert('checked');
+
+            completeToDo(currentObject, todo);       
         } else {
             alert('not checked');
         }
@@ -353,7 +368,6 @@ const setHeader = (header) => {
         default:
             break
     }
-    
 }
 
 window.onload = () =>{
@@ -365,25 +379,25 @@ window.onload = () =>{
         console.log('no todos to load')
     }
     setHeader(toDoList);
-
 }
-
-document.getElementById('trash').addEventListener('click', () => {
-    trashList.displayToDos(trashList.list);
-    setHeader(trashList);
-
-})
 
 document.getElementById('inbox').addEventListener('click', ()=> {
     toDoList.displayToDos(toDoList.list);
     setHeader(toDoList);
-
 })
 
 document.getElementById('completed').addEventListener('click', ()=> {
+    completedList.displayToDos(completedList.list)
     setHeader(completedList);
-
 })
+
+
+document.getElementById('trash').addEventListener('click', () => {
+    trashList.displayToDos(trashList.list);
+    setHeader(trashList);
+})
+
+
 
 
 
