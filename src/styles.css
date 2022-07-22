@@ -273,6 +273,12 @@ nav img{
     display: none;
 }
 
+.restore {
+    display: none;
+    width: 50px;
+    border: 1px solid black;
+}
+
 .todo:hover img{
     display: block;
 }

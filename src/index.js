@@ -5,6 +5,7 @@ import './components/fonts.css'
 import './styles.css'
 import inboxIcon from './images/inbox.svg'
 import trashIcon from './images/delete.svg'
+import completedIcon from './images/check.svg'
 
 const Actions = {
     //setters
@@ -39,6 +40,13 @@ const trashList = (()=>{
         list.push(todo)
     }
 
+    const contains = (object) => {
+        if (list.indexOf(object) < 0){
+            return false
+        }
+        return true;
+    }
+
     const getFromLocalStorage = () => {
         let storedNames = JSON.parse(localStorage.getItem("trash"));
         return storedNames
@@ -56,8 +64,69 @@ const trashList = (()=>{
         }
     } 
 
-    return {list, add, writeToLocalStorage, loadToDos}
+    const displayToDos = (list) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.innerHTML = ''
+        for (let item of list){
+            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoController.toDoDOM(objectFromString);
+            console.log(item)
+        }
+    }
 
+    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains}
+
+})();
+
+const completedList = (()=> {
+
+    const list = []
+
+    const add = (todo) => {
+        list.push(todo)
+    }
+
+    const contains = (object) => {
+        if (list.indexOf(object) < 0){
+            return false
+        }
+        return true;
+    }
+
+    const getObject = (todo) =>{
+        const createdAt = todo.querySelector('input[type|="hidden"]').value
+        const todoObject= list.find(obj => (obj.createdAt == createdAt))
+        return todoObject
+    }
+
+    const writeToLocalStorage = () => {
+        localStorage.setItem("completed", JSON.stringify(list));
+    }
+
+    const getFromLocalStorage = () => {
+        let storedNames = JSON.parse(localStorage.getItem("completed"));
+        return storedNames
+    }
+
+    const loadToDos = () => {
+        let stringList = getFromLocalStorage();
+        for (let item of stringList){
+            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoList.add(stringToObject);
+        }
+    } 
+
+    const displayToDos = (list) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.innerHTML = ''
+        for (let item of list){
+            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoController.toDoDOM(objectFromString);
+        }
+    }
+
+
+    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos}
 })();
 
 const toDoList = (()=> {
@@ -66,6 +135,13 @@ const toDoList = (()=> {
 
     const add = (todo) => {
         list.push(todo)
+    }
+
+    const contains = (object) => {
+        if (list.indexOf(object) < 0){
+            return false
+        }
+        return true;
     }
 
     const getObject = (todo) =>{
@@ -87,17 +163,40 @@ const toDoList = (()=> {
         let stringList = getFromLocalStorage();
         for (let item of stringList){
             const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            toDoList.add(stringToObject);
+            add(stringToObject);
         }
     } 
 
-    return {add, list, getObject, writeToLocalStorage, loadToDos}
+    const displayToDos = (list) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.innerHTML = ''
+        for (let item of list){
+            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoController.toDoDOM(objectFromString);
+        }
+    }
+
+    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains}
 })();
 
 
 const toDoController = (()=>{
 
-    const displayToDo = (todo) => {
+    const addToDOM = (() => {
+        document.getElementById('new').onclick =()=>{
+            const blankToDo = new ToDo('')
+            let datetime = new Date() 
+            datetime += datetime.getMilliseconds()
+            blankToDo.createdAt = datetime
+
+            toDoList.add(blankToDo);
+            toDoList.writeToLocalStorage();
+            const item = toDoDOM(blankToDo);
+            item.click();
+        }
+    })();
+
+    const toDoDOM = (todo) => {
         const toDoDOM = `
         <div class="done">
             <input type="checkbox">
@@ -105,6 +204,7 @@ const toDoController = (()=>{
         <div class="title">
             <input type="text" placeholder="New To-Do" ondrop="return false" value="${todo.title}"></input>
             <img src="${trashIcon}" class="delete">
+            <div class="restore">Hi</div>
         </div>
         <div class="description"><textarea ondrop="return false" placeholder="Notes">${todo.description}</textarea></div>
         <div class="meta">
@@ -124,7 +224,7 @@ const toDoController = (()=>{
         item.classList.add('todo');
         item.setAttribute('draggable', 'true')
         item.innerHTML = toDoDOM
-        appendContent(item)
+        appendContent(item);
 
         return item
     }
@@ -140,21 +240,25 @@ const toDoController = (()=>{
             return object === currentObject;
         });
 
-        if (!currentObject && trashList.list(contains(currentObject))){
-            console.log('yes')
-        }
-
         trashList.add(toDoList.list[index]);
         toDoList.list.splice(index, 1);
         toDoList.writeToLocalStorage();
         trashList.writeToLocalStorage();
-        todo.remove();
-        console.log(trashList.list)
+        todo.remove(); 
     }
 
     const handleUserInteraction= (todo) => {
         const currentObject = toDoList.getObject(todo)
         const deleteIcon = todo.querySelector('.delete')
+        const checkbox = todo.querySelector('input[type|="checkbox')
+
+        checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            alert('checked');
+        } else {
+            alert('not checked');
+        }
+        });
         
         deleteIcon.addEventListener('click', () => {
             deleteToDo(currentObject, todo);
@@ -226,54 +330,60 @@ const toDoController = (()=>{
         })
     })();
 
-    const displayToDos = (list) => {
-        const contentContainer = document.querySelector('.content')
-        contentContainer.innerHTML = ''
-        for (let item of list){
-            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            displayToDo(objectFromString);
-        }
-    }
-
-    const addToDOM = (() => {
-        document.getElementById('new').onclick =()=>{
-            const blankToDo = new ToDo('')
-            let datetime = new Date() 
-            datetime += datetime.getMilliseconds()
-            blankToDo.createdAt = datetime
-
-            toDoList.add(blankToDo);
-            toDoList.writeToLocalStorage();
-            const item = displayToDo(blankToDo);
-            item.click();
-        }
-    })();
-
-    return {displayToDos, displayToDo, addToDOM, deleteToDo}
+    return {toDoDOM, addToDOM, deleteToDo}
 })();
 
 
-const setHeader = () => {
+const setHeader = (header) => {
     const currentTab= document.querySelector('.currentTab')
-    currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
-    document.getElementById('new').innerHTML = 'Add to inbox'
+
+    switch(header){
+        case toDoList:
+            currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
+            document.getElementById('new').innerHTML = 'Add to inbox'
+            break
+        case trashList:
+            currentTab.innerHTML= `<img src=${trashIcon}><h1>Trash`
+            document.getElementById('new').innerHTML = ''
+            break
+        case completedList:
+            currentTab.innerHTML= `<img src=${completedIcon}><h1>Completed`
+            document.getElementById('new').innerHTML = ''
+            break
+        default:
+            break
+    }
+    
 }
 
 window.onload = () =>{
-    toDoList.loadToDos();
-    toDoController.displayToDos(toDoList.list);
-    trashList.loadToDos();
+    try {
+        toDoList.loadToDos();
+        toDoList.displayToDos(toDoList.list);
+        trashList.loadToDos();
+    } catch (error) {
+        console.log('no todos to load')
+    }
+    setHeader(toDoList);
+
 }
 
 document.getElementById('trash').addEventListener('click', () => {
-    toDoController.displayToDos(trashList.list);
+    trashList.displayToDos(trashList.list);
+    setHeader(trashList);
+
 })
 
 document.getElementById('inbox').addEventListener('click', ()=> {
-    toDoController.displayToDos(toDoList.list);
+    toDoList.displayToDos(toDoList.list);
+    setHeader(toDoList);
+
 })
 
-setHeader();
+document.getElementById('completed').addEventListener('click', ()=> {
+    setHeader(completedList);
+
+})
 
 
 
