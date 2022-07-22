@@ -239,12 +239,14 @@ const toDoController = (()=>{
         const index = toDoList.list.findIndex(object => {
             return object === currentObject;
         });
-
-        trashList.add(toDoList.list[index]);
-        toDoList.list.splice(index, 1);
-        toDoList.writeToLocalStorage();
-        trashList.writeToLocalStorage();
-        todo.remove(); 
+        todo.classList.add('zoom')
+        setTimeout(()=>{
+            trashList.add(toDoList.list[index]);
+            toDoList.list.splice(index, 1);
+            toDoList.writeToLocalStorage();
+            trashList.writeToLocalStorage();
+            todo.remove(); 
+        }, 400)
     }
 
     const completeToDo = (currentObject, todo) => {
@@ -390,7 +392,6 @@ document.getElementById('completed').addEventListener('click', ()=> {
     completedList.displayToDos(completedList.list)
     setHeader(completedList);
 })
-
 
 document.getElementById('trash').addEventListener('click', () => {
     trashList.displayToDos(trashList.list);
