@@ -1,4 +1,4 @@
-import { compareAsc, format } from 'date-fns'
+import { compareAsc, format, formatDistance, subDays, parseISO} from 'date-fns'
 import './index.html'
 import './components/reset.css'
 import './components/fonts.css'
@@ -94,6 +94,7 @@ const trashList = (()=>{
             todo.querySelector('input[type|="text"').readOnly = true
             todo.querySelector('input[type|="date"').disabled = true
             todo.querySelector('.delete').style.display = 'none'
+            todo.querySelector('.days-left').style.display = 'none'
             
             checkbox.disabled = true
             checkbox.style.opacity = .3
@@ -150,7 +151,6 @@ const completedList = (()=> {
         for (let item of stringList){
             const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             add(stringToObject);
-            console.log(item)
         }
     } 
 
@@ -253,6 +253,11 @@ const toDoController = (()=>{
     })();
 
     const toDoDOM = (todo) => {
+        let daysLeft= ''
+        if(todo.dueDate){
+            daysLeft = formatDistance(parseISO(todo.dueDate), new Date(), { addSuffix: true })
+        }
+
         const toDoDOM = `
         <div class="done">
             <input type="checkbox">
@@ -260,6 +265,7 @@ const toDoController = (()=>{
         <div class="title">
             <input type="text" placeholder="New To-Do" ondrop="return false" value="${todo.title}"></input>
             <img src="${trashIcon}" class="delete">
+            <div class="days-left">${daysLeft}</div>
             <button class="restore">Restore</div>
         </div>
         <div class="description"><textarea ondrop="return false" placeholder="Notes">${todo.description}</textarea></div>
@@ -416,6 +422,7 @@ const toDoController = (()=>{
             if (noExpand.every((item) => e.target != item)){
                 expandToDo(todo, e.target);
             }
+            
             collapseToDo(todo, currentObject);
         });
 
@@ -451,7 +458,11 @@ const toDoController = (()=>{
         currentObject.setDescription(description)
         currentObject.setdueDate(dueDate)
         currentObject.setPriority(priority)
-
+        
+        if (currentObject.dueDate){
+            const daysLeft = formatDistance(parseISO(currentObject.dueDate), new Date(), { addSuffix: true })
+            todo.querySelector('.days-left').innerHTML = daysLeft
+        }
     }
 
     const collapseToDo = (todo, currentObject) =>{
@@ -575,7 +586,7 @@ const navListener = () => {
     const navItems = [...document.querySelectorAll('.sidebar ul div')]
    
     navItems.forEach((item) => {
-        console.log(item)
+
         item.addEventListener('dragenter', () =>{
             if (item.classList.contains('droppable')){
                 item.classList.add('drop')
@@ -583,9 +594,8 @@ const navListener = () => {
             item.addEventListener('dragleave', ()=>{
                 item.classList.remove('drop')
             })
-        
             item.addEventListener('mouseup', (e)=>{
-                console.log('mouseup')
+                item.classList.remove('drop')
             })
             item.addEventListener('mouseleave', (e)=>{
                 item.classList.remove('drop')
