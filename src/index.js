@@ -71,8 +71,23 @@ const trashList = (()=>{
             const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             toDoController.toDoDOM(objectFromString);
         }
-    }
+    
+        const trashedToDos = [...document.querySelectorAll('.todo')]
+        trashedToDos.forEach((item) => {
+            const checkbox = item.querySelector('input[type|="checkbox')
+            const done = item.querySelector('.delete')
+            const restore = item.querySelector('.restore')
 
+
+            checkbox.disabled = true
+            checkbox.style.opacity = .3
+
+            done.style.display = 'none'
+            restore.style.display = 'block'
+
+        });
+    }
+    
     return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains}
 
 })();
@@ -128,7 +143,6 @@ const completedList = (()=> {
             item.querySelector('input[type|="checkbox').checked = true
         });
     }
-
 
     return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos}
 })();
@@ -208,7 +222,7 @@ const toDoController = (()=>{
         <div class="title">
             <input type="text" placeholder="New To-Do" ondrop="return false" value="${todo.title}"></input>
             <img src="${trashIcon}" class="delete">
-            <div class="restore">Hi</div>
+            <button class="restore">Restore</div>
         </div>
         <div class="description"><textarea ondrop="return false" placeholder="Notes">${todo.description}</textarea></div>
         <div class="meta">
@@ -289,7 +303,7 @@ const toDoController = (()=>{
         if (event.currentTarget.checked) {
             completeToDo(currentObject, todo);       
         } else {
-            alert('not checked');
+        
         }
         });
         
@@ -379,11 +393,11 @@ const setHeader = (header) => {
             break
         case trashList:
             currentTab.innerHTML= `<img src=${trashIcon}><h1>Trash`
-            document.getElementById('new').innerHTML = ''
+            document.getElementById('new').style.display = 'none'
             break
         case completedList:
             currentTab.innerHTML= `<img src=${completedIcon}><h1>Completed`
-            document.getElementById('new').innerHTML = ''
+            document.getElementById('new').style.display = 'none'
             break
         default:
             break

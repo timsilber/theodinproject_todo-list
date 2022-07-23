@@ -35,7 +35,7 @@ p {
 
 button {
     font-family: var(--paragraph-font);
-    cursor:pointer;
+    cursor: pointer;
     background: var(--button-color);
     border-radius: .3em;
     padding: .5em 1em;
@@ -228,7 +228,6 @@ nav img{
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em var(--stroke);
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-
 }
 
 .done input[type="checkbox"]:checked::before {
@@ -237,6 +236,10 @@ nav img{
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
 
+input[type="checkbox"][disabled] {
+    background: #00185841;
+    cursor: pointer;
+}
 
 .title{
     grid-area: title;
@@ -273,10 +276,17 @@ nav img{
     display: none;
 }
 
-.restore {
+button.restore {
     display: none;
-    width: 50px;
-    border: 1px solid black;
+    right: 0;
+    position: absolute;
+    margin-right: 1em;
+    width: max-content;
+    font-size: .8rem;
+    border: 1px solid var(--stroke);
+    background: var(--highlight-color);
+    color: var(--button-text-color);
+
 }
 
 .todo:hover img{
