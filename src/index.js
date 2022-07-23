@@ -526,7 +526,7 @@ const handleDrop = (() => {
 
     inbox.addEventListener('drop', (e) => {
         const trashyObject = document.getElementById(e.dataTransfer.getData('text/plain'))
-       
+
         if (trashList.getObject(trashyObject)){
             toDoController.unDeleteToDo(trashyObject);
         } else {
@@ -568,5 +568,21 @@ window.onload = () =>{
     trashList.loadToDos();
     completedList.loadToDos();
     console.log(completedList.list)
-
 }
+
+
+
+
+inbox.addEventListener('dragenter', ()=>{
+    inbox.classList.add('drop')
+    inbox.addEventListener('dragleave', ()=>{
+        inbox.classList.remove('drop')
+    }, {once:true})
+
+    inbox.addEventListener('dragend', ()=>{
+        inbox.classList.remove('drop')
+    }, {once:true})
+    inbox.addEventListener('mouseup', ()=>{
+        inbox.classList.remove('drop')
+    }, {once:true})
+});

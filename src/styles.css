@@ -437,3 +437,7 @@ select {
   .completed {
     background:#8bd3ddaa;
   }
+
+  .drop{
+    background: var(--highlight-color);
+  }
