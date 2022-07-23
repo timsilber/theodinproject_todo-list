@@ -47,6 +47,12 @@ const trashList = (()=>{
         return true;
     }
 
+    const getObject = (todo) =>{
+        const createdAt = todo.querySelector('input[type|="hidden"]').value
+        const todoObject= list.find(obj => (obj.createdAt == createdAt))
+        return todoObject
+    }
+
     const getFromLocalStorage = () => {
         let storedNames = JSON.parse(localStorage.getItem("trash"));
         return storedNames
@@ -58,6 +64,11 @@ const trashList = (()=>{
 
     const loadToDos = () => {
         let stringList = getFromLocalStorage();
+
+        if (!stringList){
+            console.log('trash is empty')
+            return
+        }
         for (let item of stringList){
             const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             trashList.add(stringToObject);
@@ -65,6 +76,7 @@ const trashList = (()=>{
     } 
 
     const displayToDos = (list) => {
+
         const contentContainer = document.querySelector('.content')
         contentContainer.innerHTML = ''
         for (let item of list){
@@ -73,22 +85,27 @@ const trashList = (()=>{
         }
     
         const trashedToDos = [...document.querySelectorAll('.todo')]
-        trashedToDos.forEach((item) => {
-            const checkbox = item.querySelector('input[type|="checkbox')
-            const done = item.querySelector('.delete')
-            const restore = item.querySelector('.restore')
+        trashedToDos.forEach((todo) => {
+            const checkbox = todo.querySelector('input[type|="checkbox')
+            const done = todo.querySelector('.delete')
+            const restore = todo.querySelector('.restore')
 
-
+            todo.querySelector('textarea').readOnly = true
+            todo.querySelector('input[type|="text"').readOnly = true
+            todo.querySelector('input[type|="date"').disabled = true
+            todo.querySelector('.delete').style.display = 'none'
+            
             checkbox.disabled = true
             checkbox.style.opacity = .3
 
             done.style.display = 'none'
             restore.style.display = 'block'
 
+            todo.classList.add('trashed');
         });
     }
     
-    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains}
+    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains, getObject}
 
 })();
 
@@ -124,6 +141,12 @@ const completedList = (()=> {
 
     const loadToDos = () => {
         let stringList = getFromLocalStorage();
+
+        if (!stringList){
+            console.log('completed list is empty')
+            return
+        }
+
         for (let item of stringList){
             const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             add(stringToObject);
@@ -134,13 +157,22 @@ const completedList = (()=> {
     const displayToDos = (list) => {
         const contentContainer = document.querySelector('.content')
         contentContainer.innerHTML = ''
+        
         for (let item of list){
             const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             toDoController.toDoDOM(objectFromString);
         }
+
         const completedToDos = [...document.querySelectorAll('.todo')]
-        completedToDos.forEach((item) => {
-            item.querySelector('input[type|="checkbox').checked = true
+        completedToDos.forEach((todo) => {
+            todo.querySelector('input[type|="checkbox"').checked = true
+            todo.querySelector('textarea').readOnly = true
+            todo.querySelector('input[type|="text"').readOnly = true
+            todo.querySelector('input[type|="date"').disabled = true
+            todo.querySelector('.delete').style.display = 'none'
+
+            todo.classList.add('completed')
+
         });
     }
 
@@ -179,6 +211,12 @@ const toDoList = (()=> {
 
     const loadToDos = () => {
         let stringList = getFromLocalStorage();
+
+        if (!stringList){
+            console.log('inbox is empty')
+            return
+        }
+
         for (let item of stringList){
             const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
             add(stringToObject);
@@ -227,11 +265,11 @@ const toDoController = (()=>{
         <div class="description"><textarea ondrop="return false" placeholder="Notes">${todo.description}</textarea></div>
         <div class="meta">
             <input type="date" value="${todo.dueDate}"></input>
-            <div class="priority">
-                <select class="classic" value='${todo.priority}'>
-                    <option>High</option>
-                    <option>Medium</option>
-                    <option>Low</option>
+            <div class="priorityContainer">
+                <select class="priority" value='${todo.priority}'>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="low">Low</option>
                 </select>
             </div>
             <input type="hidden" value="${todo.createdAt}"></input>
@@ -242,6 +280,11 @@ const toDoController = (()=>{
         item.classList.add('todo');
         item.setAttribute('draggable', 'true')
         item.innerHTML = toDoDOM
+        for (let option of item.querySelector('.priority').options){
+            if (todo.priority == option.value){
+                option.setAttribute('selected', true)
+            }
+        }
         appendContent(item);
 
         return item
@@ -272,6 +315,24 @@ const toDoController = (()=>{
         }, 500)
     }
 
+    const unDeleteToDo = (todo) => {
+        const currentObject = trashList.getObject(todo)
+        const index = trashList.list.indexOf(trashList.getObject(todo))
+
+        todo.querySelector('.description').classList.remove('show')
+        todo.querySelector('.meta').classList.remove('show')
+        
+        toDoList.add(trashList.list[index]);
+        trashList.list.splice(index, 1);
+        trashList.writeToLocalStorage();
+        toDoList.writeToLocalStorage();
+
+        todo.classList.add('zoom')
+        setTimeout(()=>{
+            todo.remove(); 
+        }, 500)
+    }
+
     const completeToDo = (currentObject, todo) => {
         const index = toDoList.list.findIndex(object => {
             return object === currentObject;
@@ -281,6 +342,7 @@ const toDoController = (()=>{
         todo.querySelector('.meta').classList.remove('show')
         
         currentObject.setDone(true);
+        currentObject.completedAt = new Date()
         completedList.add(toDoList.list[index]);
         toDoList.list.splice(index, 1);
         toDoList.writeToLocalStorage();
@@ -294,17 +356,44 @@ const toDoController = (()=>{
         }, 500)
     }
 
+    const unCompleteToDo = (todo) => {
+        const currentObject = completedList.getObject(todo)
+        const index = completedList.list.indexOf(completedList.getObject(todo))
+
+        todo.querySelector('.description').classList.remove('show')
+        todo.querySelector('.meta').classList.remove('show')
+        
+        currentObject.setDone(false);
+        toDoList.add(completedList.list[index]);
+        completedList.list.splice(index, 1);
+        completedList.writeToLocalStorage();
+        toDoList.writeToLocalStorage();
+
+        setTimeout(()=>{
+            todo.classList.add('slide-out')
+        }, 200)
+        setTimeout(()=>{
+            todo.remove(); 
+        }, 500)
+    }
+
     const handleUserInteraction= (todo) => {
         const currentObject = toDoList.getObject(todo)
         const deleteIcon = todo.querySelector('.delete')
         const checkbox = todo.querySelector('input[type|="checkbox')
+        const restore = todo.querySelector('.restore')
 
-        checkbox.addEventListener('change', (event) => {
-        if (event.currentTarget.checked) {
+
+        checkbox.addEventListener('change', (e) => {
+        if (e.currentTarget.checked) {
             completeToDo(currentObject, todo);       
         } else {
-        
+            unCompleteToDo(todo);
         }
+        });
+
+        restore.addEventListener('click', (e)=>{
+            unDeleteToDo(todo);
         });
         
         deleteIcon.addEventListener('click', () => {
@@ -321,8 +410,10 @@ const toDoController = (()=>{
         todo.addEventListener('click', (e) => {
             const checkbox = todo.querySelector('input[type="checkbox"]');
             const trashIcon = todo.querySelector('.delete')
+            const restore = todo.querySelector('.restore')
+            const noExpand = [checkbox, trashIcon, restore]
 
-            if (e.target != checkbox && e.target != todo.querySelector('.done') && e.target !=trashIcon){
+            if (noExpand.every((item) => e.target != item)){
                 expandToDo(todo, e.target);
             }
             collapseToDo(todo, currentObject);
@@ -350,10 +441,17 @@ const toDoController = (()=>{
     }
 
     const updateObject = (todo, currentObject) => {
-        const title = todo.querySelector('input[type|="text"]').value, description = todo.querySelector('textarea').value, dueDate = todo.querySelector('input[type|="date"]').value
+        const title = todo.querySelector('input[type|="text"]').value, 
+        description = todo.querySelector('textarea').value, 
+        dueDate = todo.querySelector('input[type|="date"]').value, 
+        priorityDropdown = todo.querySelector('.priority'),
+        priority = priorityDropdown.options[priorityDropdown.selectedIndex].value
+
         currentObject.setTitle(title)
         currentObject.setDescription(description)
         currentObject.setdueDate(dueDate)
+        currentObject.setPriority(priority)
+
     }
 
     const collapseToDo = (todo, currentObject) =>{
@@ -371,68 +469,104 @@ const toDoController = (()=>{
         }
     }
 
-    const handleDrop = (() => {
-        const trash = document.getElementById('trash')
-        trash.addEventListener('drop', (e) => {
-            const trashyObject = document.getElementById(e.dataTransfer.getData('text/plain'))
-            toDoController.deleteToDo(toDoList.getObject(trashyObject), trashyObject)
-        })
-    })();
-
-    return {toDoDOM, addToDOM, deleteToDo}
+    return {toDoDOM, addToDOM, deleteToDo, unDeleteToDo, unCompleteToDo, completeToDo}
 })();
 
+const headerController = (() => {
 
 const setHeader = (header) => {
     const currentTab= document.querySelector('.currentTab')
+    const trash = document.getElementById('trash')
+    const inbox = document.getElementById('inbox')
+    const completed = document.getElementById('completed')
 
     switch(header){
         case toDoList:
             currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
             document.getElementById('new').style.display = 'block'
             document.getElementById('new').innerHTML = 'Add to inbox'
+            
+            inbox.setAttribute('ondragover', '')
+            completed.setAttribute('ondragover', 'return false')
+            trash.setAttribute('ondragover', 'return false')
+
             break
         case trashList:
             currentTab.innerHTML= `<img src=${trashIcon}><h1>Trash`
             document.getElementById('new').style.display = 'none'
+
+            inbox.setAttribute('ondragover', 'return false')
+            completed.setAttribute('ondragover', '')
+            trash.setAttribute('ondragover', '')
+
             break
         case completedList:
             currentTab.innerHTML= `<img src=${completedIcon}><h1>Completed`
             document.getElementById('new').style.display = 'none'
+            
+            inbox.setAttribute('ondragover', 'return false')
+            completed.setAttribute('ondragover', '')
+            trash.setAttribute('ondragover', '')            
             break
         default:
             break
     }
 }
 
-window.onload = () =>{
-    try {
-        toDoList.loadToDos();
-        toDoList.displayToDos(toDoList.list);
-        trashList.loadToDos();
-        completedList.loadToDos();
-        console.log(completedList.list)
-    } catch (error) {
-        console.log('no todos to load')
-    }
-    setHeader(toDoList);
-}
+const handleDrop = (() => {
+
+    const trash = document.getElementById('trash')
+    const inbox = document.getElementById('inbox')
+    const completed = document.getElementById('completed')
+
+    trash.addEventListener('drop', (e) => {
+        const trashyObject = document.getElementById(e.dataTransfer.getData('text/plain'))
+        toDoController.deleteToDo(toDoList.getObject(trashyObject), trashyObject)
+    });
+
+    inbox.addEventListener('drop', (e) => {
+        const trashyObject = document.getElementById(e.dataTransfer.getData('text/plain'))
+       
+        if (trashList.getObject(trashyObject)){
+            toDoController.unDeleteToDo(trashyObject);
+        } else {
+            toDoController.unCompleteToDo(trashyObject)
+        }
+    })
+
+    completed.addEventListener('drop', (e) => {
+        const trashyObject = document.getElementById(e.dataTransfer.getData('text/plain'))
+        toDoController.completeToDo(toDoList.getObject(trashyObject), trashyObject)
+    })
+
+})();
+
 
 document.getElementById('inbox').addEventListener('click', ()=> {
-    try{
     toDoList.displayToDos(toDoList.list);
-}catch(e){}
     setHeader(toDoList);
 })
 
 document.getElementById('completed').addEventListener('click', ()=> {
-    try{completedList.displayToDos(completedList.list)}catch(e){}
+    completedList.displayToDos(completedList.list)
     setHeader(completedList);
 })
 
 document.getElementById('trash').addEventListener('click', () => {
-    try{
-    trashList.displayToDos(trashList.list);}catch(e){}
+    trashList.displayToDos(trashList.list);
     setHeader(trashList);
 })
 
+return {setHeader}
+})();
+
+window.onload = () =>{
+    toDoList.loadToDos();
+    headerController.setHeader(toDoList);
+
+    toDoList.displayToDos(toDoList.list);
+    trashList.loadToDos();
+    completedList.loadToDos();
+    console.log(completedList.list)
+
+}
