@@ -282,10 +282,11 @@ button.restore {
     position: absolute;
     margin-right: 1em;
     width: max-content;
-    font-size: .8rem;
+    font-size: .9rem;
     border: 1px solid var(--stroke);
     background: var(--highlight-color);
     color: var(--button-text-color);
+    opacity: .8;
 
 }
 

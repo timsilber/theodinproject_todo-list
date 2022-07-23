@@ -389,6 +389,7 @@ const setHeader = (header) => {
     switch(header){
         case toDoList:
             currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
+            document.getElementById('new').style.display = 'block'
             document.getElementById('new').innerHTML = 'Add to inbox'
             break
         case trashList:
@@ -418,17 +419,20 @@ window.onload = () =>{
 }
 
 document.getElementById('inbox').addEventListener('click', ()=> {
+    try{
     toDoList.displayToDos(toDoList.list);
+}catch(e){}
     setHeader(toDoList);
 })
 
 document.getElementById('completed').addEventListener('click', ()=> {
-    completedList.displayToDos(completedList.list)
+    try{completedList.displayToDos(completedList.list)}catch(e){}
     setHeader(completedList);
 })
 
 document.getElementById('trash').addEventListener('click', () => {
-    trashList.displayToDos(trashList.list);
+    try{
+    trashList.displayToDos(trashList.list);}catch(e){}
     setHeader(trashList);
 })
 
