@@ -489,6 +489,10 @@ const setHeader = (header) => {
             inbox.setAttribute('ondragover', '')
             completed.setAttribute('ondragover', 'return false')
             trash.setAttribute('ondragover', 'return false')
+            
+            inbox.classList.remove('droppable');
+            trash.classList.add('droppable');
+            completed.classList.add('droppable');
 
             break
         case trashList:
@@ -499,6 +503,10 @@ const setHeader = (header) => {
             completed.setAttribute('ondragover', '')
             trash.setAttribute('ondragover', '')
 
+            inbox.classList.add('droppable');
+            trash.classList.remove('droppable');
+            completed.classList.remove('droppable');
+
             break
         case completedList:
             currentTab.innerHTML= `<img src=${completedIcon}><h1>Completed`
@@ -506,7 +514,12 @@ const setHeader = (header) => {
             
             inbox.setAttribute('ondragover', 'return false')
             completed.setAttribute('ondragover', '')
-            trash.setAttribute('ondragover', '')            
+            trash.setAttribute('ondragover', '')  
+            
+            inbox.classList.add('droppable');
+            trash.classList.remove('droppable');
+            completed.classList.remove('droppable');
+
             break
         default:
             break
@@ -557,32 +570,39 @@ document.getElementById('trash').addEventListener('click', () => {
     setHeader(trashList);
 })
 
-return {setHeader}
+
+const navListener = () => {
+    const navItems = [...document.querySelectorAll('.sidebar ul div')]
+   
+    navItems.forEach((item) => {
+        console.log(item)
+        item.addEventListener('dragenter', () =>{
+            if (item.classList.contains('droppable')){
+                item.classList.add('drop')
+            }
+            item.addEventListener('dragleave', ()=>{
+                item.classList.remove('drop')
+            })
+        
+            item.addEventListener('mouseup', (e)=>{
+                console.log('mouseup')
+            })
+            item.addEventListener('mouseleave', (e)=>{
+                item.classList.remove('drop')
+            });
+        });
+})};
+
+return {setHeader, navListener}
 })();
 
 window.onload = () =>{
-    toDoList.loadToDos();
     headerController.setHeader(toDoList);
+    headerController.navListener();
 
+    toDoList.loadToDos();
     toDoList.displayToDos(toDoList.list);
     trashList.loadToDos();
     completedList.loadToDos();
-    console.log(completedList.list)
 }
 
-
-
-
-inbox.addEventListener('dragenter', ()=>{
-    inbox.classList.add('drop')
-    inbox.addEventListener('dragleave', ()=>{
-        inbox.classList.remove('drop')
-    }, {once:true})
-
-    inbox.addEventListener('dragend', ()=>{
-        inbox.classList.remove('drop')
-    }, {once:true})
-    inbox.addEventListener('mouseup', ()=>{
-        inbox.classList.remove('drop')
-    }, {once:true})
-});
