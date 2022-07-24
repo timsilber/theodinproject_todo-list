@@ -277,9 +277,9 @@ const toDoController = (()=>{
         <div class="title">
             <textarea rows="1" class="title-text nowrap" placeholder="New To-Do" ondrop="return false">${todo.title}</textarea>
             <img src="${trashIcon}" class="delete">
-            <div class="days-left">${daysLeft}</div>
-            <button class="restore">Restore</div>
         </div>
+        <div class="days-left">${daysLeft}</div>
+        <button class="restore">Restore</button>
         <div class="description">
             <textarea rows="1" class="description-text" ondrop="return false" placeholder="Notes">${todo.description}</textarea>
         </div>
@@ -444,8 +444,10 @@ const toDoController = (()=>{
     
     const expandToDo = (todo) => {
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
+        const daysLeft = todo.querySelector('.days-left')
         description.classList.add('show');
         meta.classList.add('show'); 
+        daysLeft.style.display = 'none'
         resizeTextAreaInput(todo);
         
     }
@@ -498,6 +500,7 @@ const toDoController = (()=>{
     const collapseToDo = (todo, currentObject) =>{
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         const titleArea = todo.querySelector('.title-text')
+        const daysLeft = todo.querySelector('.days-left')
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
@@ -505,6 +508,7 @@ const toDoController = (()=>{
                     titleArea.classList.add('nowrap')
                     description.classList.remove('show');
                     meta.classList.remove('show');
+                    daysLeft.style.display = 'block'
                     updateObject(todo, currentObject);
                     toDoList.writeToLocalStorage(toDoList.list);
                 };
