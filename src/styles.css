@@ -265,8 +265,7 @@ textarea{
     color: var(--paragraph-text-color);
     overflow: hidden;
     transition: height .8s cubic-bezier(0.42, 0, 0.15, 1.1);
-    display: grid;
-    align-items: center;
+    cursor: pointer;
     height: 1.4em;
 }
 
@@ -280,7 +279,6 @@ textarea{
         overflow-wrap: normal;
         overflow-x: scroll;
         text-overflow: ellipsis;
-
 }
 
 /* 

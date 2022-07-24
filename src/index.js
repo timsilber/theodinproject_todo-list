@@ -275,7 +275,7 @@ const toDoController = (()=>{
             <input type="checkbox">
         </div>
         <div class="title">
-            <textarea class="title-text nowrap" placeholder="New To-Do" ondrop="return false">${todo.title}</textarea>
+            <textarea rows="1" class="title-text nowrap" placeholder="New To-Do" ondrop="return false">${todo.title}</textarea>
             <img src="${trashIcon}" class="delete">
             <div class="days-left">${daysLeft}</div>
             <button class="restore">Restore</div>
@@ -458,28 +458,25 @@ const toDoController = (()=>{
        descriptionArea.style.height = '1px'
        titleArea.style.height = '1px'
 
+       titleArea.classList.remove('nowrap')
+       console.log(titleArea.scrollHeight)
+       titleArea.setAttribute("style", "height:" + (titleArea.scrollHeight) + "px");
+       titleArea.addEventListener("input", onTitleInput, false);
+       window.addEventListener("resize", onTitleInput, false);
+
+       function onTitleInput(e) {
+           console.log(titleArea.scrollHeight)
+           titleArea.style.height = "auto";
+           titleArea.style.height = (titleArea.scrollHeight) + "px";
+       }
 
         descriptionArea.setAttribute("style", "height:" + (descriptionArea.scrollHeight) + "px;overflow-y:hidden;");
         descriptionArea.addEventListener("input", onDescriptionInput, false);
         window.addEventListener("resize", onDescriptionInput, false);
 
         function onDescriptionInput(e) {
-            descriptionArea.style.height = "fit-content";
+            descriptionArea.style.height = "auto";
             descriptionArea.style.height = (descriptionArea.scrollHeight) + "px";
-        }
-
-        titleArea.classList.remove('nowrap')
-        titleArea.setAttribute("style", "height:" + (titleArea.scrollHeight) + "px");
-        titleArea.addEventListener("input", onTitleInput, false);
-        window.addEventListener("resize", onTitleInput, false);
-
-
-        function onTitleInput(e) {
-            titleArea.style.height = "fit-content";
-            titleArea.style.height = (titleArea.scrollHeight) + "px";
-        }
-        if (descriptionArea.value.length == 0){
-            descriptionArea.style.height= '3em'
         }
     }
 
@@ -504,7 +501,6 @@ const toDoController = (()=>{
     const collapseToDo = (todo, currentObject) =>{
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         const titleArea = todo.querySelector('.title-text')
-
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
