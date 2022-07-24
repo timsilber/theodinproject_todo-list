@@ -196,7 +196,7 @@ nav img{
     display: grid;
     align-items: center;
     min-width: min-content;
-    position: relative;
+    position: absolute;
     padding:.2em;
 }
 
@@ -267,6 +267,7 @@ textarea{
     transition: height .8s cubic-bezier(0.42, 0, 0.15, 1.1);
     display: grid;
     align-items: center;
+    height: 1.4em;
 }
 
 .title textarea::placeholder{

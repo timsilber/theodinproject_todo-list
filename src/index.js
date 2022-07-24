@@ -458,22 +458,27 @@ const toDoController = (()=>{
 
 
         descriptionArea.setAttribute("style", "height:" + (descriptionArea.scrollHeight) + "px;overflow-y:hidden;");
-        descriptionArea.addEventListener("input", onInput, false);
-        window.addEventListener("resize", onInput, false);
+        descriptionArea.addEventListener("input", onDescriptionInput, false);
+        window.addEventListener("resize", onDescriptionInput, false);
 
-
-        function onInput(e) {
-            descriptionArea.style.height = "auto";
+        function onDescriptionInput(e) {
+            descriptionArea.style.height = "fit-content";
             descriptionArea.style.height = (descriptionArea.scrollHeight) + "px";
         }
 
         titleArea.classList.remove('nowrap')
         titleArea.setAttribute("style", "height:" + (titleArea.scrollHeight) + "px");
-        titleArea.addEventListener("input", onInput, false);
+        titleArea.addEventListener("input", onTitleInput, false);
+        window.addEventListener("resize", onTitleInput, false);
 
-        // if (descriptionArea.value.length == 0){
-        //     descriptionArea.style.height= '3em'
-        // }
+
+        function onTitleInput(e) {
+            titleArea.style.height = "fit-content";
+            titleArea.style.height = (titleArea.scrollHeight) + "px";
+        }
+        if (descriptionArea.value.length == 0){
+            descriptionArea.style.height= '3em'
+        }
     }
 
     function resizeTextArea(todo){
