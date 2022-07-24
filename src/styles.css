@@ -282,14 +282,13 @@ input[type="checkbox"][disabled] {
     padding: .5em;
     right: 0;
     margin-right: 1em;
-    background: var(--highlight-color);
-    color: var(--button-text-color);
+    background: #fef6e4dd;
     opacity: 1;
     font-family: var(--header-font);
     border-radius: .3em;
     padding: .5em 1em;
-    /* border: 2px solid var(--stroke); */
-    color: var(--button-text-color);
+    /* border: 1px solid #001858aa; */
+    color: #001858dd;
 }
 
 .days-left:empty{

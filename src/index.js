@@ -47,6 +47,10 @@ const trashList = (()=>{
         return true;
     }
 
+    const sortList = (criterion) => {
+        return list.sort((a,b)=>compareAsc(parseISO(a.criterion), parseISO(b.criterion)))
+    }
+
     const getObject = (todo) =>{
         const createdAt = todo.querySelector('input[type|="hidden"]').value
         const todoObject= list.find(obj => (obj.createdAt == createdAt))
@@ -106,7 +110,7 @@ const trashList = (()=>{
         });
     }
     
-    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains, getObject}
+    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains, getObject, sortList}
 
 })();
 
@@ -123,6 +127,10 @@ const completedList = (()=> {
             return false
         }
         return true;
+    }
+
+    const sortList = (criterion) => {
+        return list.sort((a,b)=>compareAsc(parseISO(a.criterion), parseISO(b.criterion)))
     }
 
     const getObject = (todo) =>{
@@ -176,7 +184,7 @@ const completedList = (()=> {
         });
     }
 
-    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos}
+    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos, sortList}
 })();
 
 const toDoList = (()=> {
@@ -192,6 +200,10 @@ const toDoList = (()=> {
             return false
         }
         return true;
+    }
+
+    const sortList = (criterion) => {
+        return list.sort((a,b)=>compareAsc(parseISO(a.criterion), parseISO(b.criterion)))
     }
 
     const getObject = (todo) =>{
@@ -232,7 +244,7 @@ const toDoList = (()=> {
         }
     }
 
-    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains}
+    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains, sortList}
 })();
 
 //handles all DOM interactions with individual toDos
@@ -496,6 +508,8 @@ const setHeader = (header) => {
             currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
             document.getElementById('new').style.display = 'block'
             document.getElementById('new').innerHTML = 'Add to inbox'
+            document.getElementById('sort').innerHTML = 'Sort'
+
             
             inbox.setAttribute('ondragover', '')
             completed.setAttribute('ondragover', 'return false')
@@ -504,6 +518,7 @@ const setHeader = (header) => {
             inbox.classList.remove('droppable');
             trash.classList.add('droppable');
             completed.classList.add('droppable');
+
 
             break
         case trashList:
@@ -532,6 +547,7 @@ const setHeader = (header) => {
             completed.classList.remove('droppable');
 
             break
+
         default:
             break
     }
