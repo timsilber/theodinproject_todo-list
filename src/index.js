@@ -281,7 +281,7 @@ const toDoController = (()=>{
             <button class="restore">Restore</div>
         </div>
         <div class="description">
-            <textarea class="description-text" ondrop="return false" placeholder="Notes">${todo.description}</textarea>
+            <textarea rows="1" class="description-text" ondrop="return false" placeholder="Notes">${todo.description}</textarea>
         </div>
         <div class="meta">
             <input type="date" value="${todo.dueDate}"></input>
