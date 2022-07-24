@@ -420,10 +420,6 @@ const toDoController = (()=>{
             deleteToDo(currentObject, todo);
         })
 
-        // window.addEventListener('resize', ()=>{
-        //     resizeTextAreaInput(todo);
-        // });
-
         todo.addEventListener('click', (e) => {
             const checkbox = todo.querySelector('input[type="checkbox"]');
             const trashIcon = todo.querySelector('.delete')
@@ -432,10 +428,16 @@ const toDoController = (()=>{
 
             if (noExpand.every((item) => e.target != item)){
                 expandToDo(todo, e.target);
+
             }
-            
+            todo.addEventListener('keyup', ()=>{
+                    updateObject(todo, currentObject)
+                    setTimeout(toDoList.writeToLocalStorage(), 1000)
+                })
             collapseToDo(todo, currentObject);
         });
+
+
 
         todo.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', e.target.id);
@@ -478,15 +480,6 @@ const toDoController = (()=>{
         }
         if (descriptionArea.value.length == 0){
             descriptionArea.style.height= '3em'
-        }
-    }
-
-    function resizeTextArea(todo){
-        const textarea = todo.querySelector('textarea')
-        textarea.style.height = '1px'
-        textarea.style.height= textarea.scrollHeight+"px"
-        if (textarea.value.length == 0){
-            textarea.style.height= '3em'
         }
     }
 
