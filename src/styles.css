@@ -194,7 +194,7 @@ nav img{
 .done{
     grid-area: done;
     display: grid;
-    place-items: center;
+    align-items: center;
     min-width: min-content;
     position: relative;
     padding:.2em;
@@ -241,16 +241,49 @@ input[type="checkbox"][disabled] {
     cursor: pointer;
 }
 
+textarea{
+    line-height: 1.2em;
+}
+
 .title{
     grid-area: title;
     display: flex;
     align-items: center;
-    padding: .5em .5em;
-    height: min-content;
+    padding: .3em .5em ;
+    /* height: min-content; */
     position: relative;
 }
 
-.title input[type="text"]{
+.title textarea {
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: var(--paragraph-font);
+    font-size: 1rem;  
+    resize: none;  
+    color: var(--paragraph-text-color);
+    overflow: hidden;
+    transition: height .8s cubic-bezier(0.42, 0, 0.15, 1.1);
+    display: grid;
+    align-items: center;
+}
+
+.title textarea::placeholder{
+    color: #172c6681;
+}
+
+.nowrap{
+        height: 1.4em !important;
+        white-space: pre;
+        overflow-wrap: normal;
+        overflow-x: scroll;
+        text-overflow: ellipsis;
+
+}
+
+/* 
+.title {
     color: var(--paragraph-text-color);
     height: auto;
     font-size: 1rem;
@@ -266,7 +299,7 @@ input[type="checkbox"][disabled] {
 
 .title input[type="text"]::placeholder{
     color: #172c6681;
-}
+} */
 
 .title img {
     position: absolute;
