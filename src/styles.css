@@ -307,7 +307,7 @@ button.restore {
     width: max-content;
     font-size: .9rem;
     border: 1px solid var(--stroke);
-    background: var(--highlight-color);
+    background: var(--button-color);
     color: var(--button-text-color);
     opacity: 1;
     font-family: var(--header-font);
@@ -457,9 +457,18 @@ select {
     background: #172c6622;
   }
 
-  .completed {
+ .todo.trashed, .todo.trashed *:not(button) {
+    cursor: not-allowed;
+  }
+
+  .completed{
     background:#8bd3ddaa;
   }
+/* 
+  .completed, .completed *:not(.title) {
+    cursor:default !important;
+  } */
+
 
   .drop{
     background: var(--highlight-color);

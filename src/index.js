@@ -508,7 +508,7 @@ const setHeader = (header) => {
             currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
             document.getElementById('new').style.display = 'block'
             document.getElementById('new').innerHTML = 'Add to inbox'
-            document.getElementById('sort').innerHTML = 'Sort'
+            // document.getElementById('sort').innerHTML = 'Sort'
 
             
             inbox.setAttribute('ondragover', '')
