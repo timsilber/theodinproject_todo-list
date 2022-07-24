@@ -94,8 +94,8 @@ const trashList = (()=>{
             const done = todo.querySelector('.delete')
             const restore = todo.querySelector('.restore')
 
-            todo.querySelector('textarea').readOnly = true
-            todo.querySelector('input[type|="text"').readOnly = true
+            todo.querySelector('.description-text').readOnly = true
+            todo.querySelector('.title-text').readOnly = true
             todo.querySelector('input[type|="date"').disabled = true
             todo.querySelector('.delete').style.display = 'none'
             todo.querySelector('.days-left').style.display = 'none'
@@ -174,8 +174,8 @@ const completedList = (()=> {
         const completedToDos = [...document.querySelectorAll('.todo')]
         completedToDos.forEach((todo) => {
             todo.querySelector('input[type|="checkbox"').checked = true
-            todo.querySelector('textarea').readOnly = true
-            todo.querySelector('input[type|="text"').readOnly = true
+            todo.querySelector('.description-text').readOnly = true
+            todo.querySelector('.title-text').readOnly = true
             todo.querySelector('input[type|="date"').disabled = true
             todo.querySelector('.delete').style.display = 'none'
 
@@ -275,12 +275,14 @@ const toDoController = (()=>{
             <input type="checkbox">
         </div>
         <div class="title">
-            <input type="text" placeholder="New To-Do" ondrop="return false" value="${todo.title}"></input>
+            <textarea rows="1" class="title-text nowrap" placeholder="New To-Do" ondrop="return false">${todo.title}</textarea>
             <img src="${trashIcon}" class="delete">
             <div class="days-left">${daysLeft}</div>
             <button class="restore">Restore</div>
         </div>
-        <div class="description"><textarea ondrop="return false" placeholder="Notes">${todo.description}</textarea></div>
+        <div class="description">
+            <textarea rows="1" class="description-text" ondrop="return false" placeholder="Notes">${todo.description}</textarea>
+        </div>
         <div class="meta">
             <input type="date" value="${todo.dueDate}"></input>
             <div class="priorityContainer">
@@ -418,13 +420,6 @@ const toDoController = (()=>{
             deleteToDo(currentObject, todo);
         })
 
-        window.addEventListener('resize', ()=>{
-            resizeTextArea(todo);
-        });
-        todo.addEventListener('input', () => {
-            resizeTextArea(todo);
-        });
-
         todo.addEventListener('click', (e) => {
             const checkbox = todo.querySelector('input[type="checkbox"]');
             const trashIcon = todo.querySelector('.delete')
@@ -433,8 +428,12 @@ const toDoController = (()=>{
 
             if (noExpand.every((item) => e.target != item)){
                 expandToDo(todo, e.target);
+
             }
-            
+            todo.addEventListener('keyup', ()=>{
+                    updateObject(todo, currentObject)
+                    setTimeout(toDoList.writeToLocalStorage(), 1000)
+                })
             collapseToDo(todo, currentObject);
         });
 
@@ -447,21 +446,40 @@ const toDoController = (()=>{
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         description.classList.add('show');
         meta.classList.add('show'); 
-        resizeTextArea(todo);
+        resizeTextAreaInput(todo);
+        
     }
 
-    function resizeTextArea(todo){
-        const textarea = todo.querySelector('textarea')
-        textarea.style.height = '1px'
-        textarea.style.height= textarea.scrollHeight+"px"
-        if (textarea.value.length == 0){
-            textarea.style.height= '3em'
+    const resizeTextAreaInput = (todo) => {
+       const titleArea = todo.querySelector('.title-text')
+       const descriptionArea = todo.querySelector('.description-text')
+       descriptionArea.style.height = '1px'
+       titleArea.style.height = '1px'
+
+       titleArea.classList.remove('nowrap')
+       console.log(titleArea.scrollHeight)
+       titleArea.setAttribute("style", "height:" + (titleArea.scrollHeight) + "px");
+       titleArea.addEventListener("input", onTitleInput, false);
+       window.addEventListener("resize", onTitleInput, false);
+
+       function onTitleInput(e) {
+           titleArea.style.height = "auto";
+           titleArea.style.height = (titleArea.scrollHeight) + "px";
+       }
+
+        descriptionArea.setAttribute("style", "height:" + (descriptionArea.scrollHeight) + "px;overflow-y:hidden;");
+        descriptionArea.addEventListener("input", onDescriptionInput, false);
+        window.addEventListener("resize", onDescriptionInput, false);
+
+        function onDescriptionInput(e) {
+            descriptionArea.style.height = "auto";
+            descriptionArea.style.height = (descriptionArea.scrollHeight) + "px";
         }
     }
 
     const updateObject = (todo, currentObject) => {
-        const title = todo.querySelector('input[type|="text"]').value, 
-        description = todo.querySelector('textarea').value, 
+        const title = todo.querySelector('.title-text').value
+        const description = todo.querySelector('.description-text').value, 
         dueDate = todo.querySelector('input[type|="date"]').value, 
         priorityDropdown = todo.querySelector('.priority'),
         priority = priorityDropdown.options[priorityDropdown.selectedIndex].value
@@ -479,10 +497,12 @@ const toDoController = (()=>{
 
     const collapseToDo = (todo, currentObject) =>{
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
+        const titleArea = todo.querySelector('.title-text')
 
         if (description.classList.contains('show')){
             window.addEventListener('click', (e2) => {
                 if (!todo.contains(e2.target)){ 
+                    titleArea.classList.add('nowrap')
                     description.classList.remove('show');
                     meta.classList.remove('show');
                     updateObject(todo, currentObject);
@@ -508,7 +528,7 @@ const setHeader = (header) => {
             currentTab.innerHTML= `<img src=${inboxIcon}><h1>Inbox`
             document.getElementById('new').style.display = 'block'
             document.getElementById('new').innerHTML = 'Add to inbox'
-            document.getElementById('sort').innerHTML = 'Sort'
+            // document.getElementById('sort').innerHTML = 'Sort'
 
             
             inbox.setAttribute('ondragover', '')
