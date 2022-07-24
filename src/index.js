@@ -437,8 +437,6 @@ const toDoController = (()=>{
             collapseToDo(todo, currentObject);
         });
 
-
-
         todo.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', e.target.id);
         });
@@ -452,7 +450,7 @@ const toDoController = (()=>{
         
     }
 
-    function resizeTextAreaInput(todo){
+    const resizeTextAreaInput = (todo) => {
        const titleArea = todo.querySelector('.title-text')
        const descriptionArea = todo.querySelector('.description-text')
        descriptionArea.style.height = '1px'
@@ -465,7 +463,6 @@ const toDoController = (()=>{
        window.addEventListener("resize", onTitleInput, false);
 
        function onTitleInput(e) {
-           console.log(titleArea.scrollHeight)
            titleArea.style.height = "auto";
            titleArea.style.height = (titleArea.scrollHeight) + "px";
        }
