@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>todo</title>
-<script defer src="runtime.ea4448a2.js"></script><script defer src="main.ea4448a2.js"></script></head>
+<script defer src="runtime.e456905e.js"></script><script defer src="main.e456905e.js"></script></head>
 <body>
     <div class="banner">
         <img src="db5de1436d28ad09f735.png" alt="">
@@ -13,25 +13,31 @@
     <div class="header">
         <div class="currentTab">
         </div>
+        <!-- <button id="sort"></button> -->
+
         <button id="new"></button>
     </div>
 
     <div class="sidebar">
         <nav>
             <ul>
-                <div id="inbox" ondragover="">
+                <div id="inbox" class="" ondragover="">
                     <img src="d2e4185328e4bd15812a.svg" alt="">
                     <li>Inbox</li>
                 </div>
-                <div id="completed">
+                <div class="" id="completed" ondragover="">
                     <img src="d3fc12e829afabd25467.svg" alt="">
                     <li>Completed</li>
                 </div>
-                <div  id="trash">
+                <div class="" id="trash" ondragover="">
                     <img src="78739f3ad55baac401f7.svg" alt="">
                     <li>Trash</li>
                 </div>
             </ul>
+            <div class="sort">
+                <button id="sort-due">Sort by due</button>
+                <button id="sort-created">Sort by created</button>
+            </div>
         </nav>
     </div>
 
