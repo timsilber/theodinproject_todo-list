@@ -280,7 +280,7 @@ textarea{
     border: none;
     outline: none;
     font-family: var(--paragraph-font);
-    font-size: 1rem;  
+    font-size: 1.1rem;  
     resize: none;  
     color: var(--paragraph-text-color);
     overflow: hidden;
@@ -390,7 +390,7 @@ button.restore {
     border: none;
     outline: none;
     font-family: var(--paragraph-font);
-    font-size: 1rem;  
+    font-size: 1.1rem;  
     resize: none;  
     color: var(--paragraph-text-color);
     overflow: hidden;
