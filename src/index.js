@@ -420,9 +420,9 @@ const toDoController = (()=>{
             deleteToDo(currentObject, todo);
         })
 
-        window.addEventListener('resize', ()=>{
-            resizeTextArea(todo);
-        });
+        // window.addEventListener('resize', ()=>{
+        //     resizeTextAreaInput(todo);
+        // });
 
         todo.addEventListener('click', (e) => {
             const checkbox = todo.querySelector('input[type="checkbox"]');
@@ -446,24 +446,25 @@ const toDoController = (()=>{
         const description = todo.querySelector('.description'), meta = todo.querySelector('.meta')
         description.classList.add('show');
         meta.classList.add('show'); 
-        resizeTextArea(todo);
+        resizeTextAreaInput(todo);
+        
     }
 
-    function resizeTextArea(todo){
+    function resizeTextAreaInput(todo){
        const titleArea = todo.querySelector('.title-text')
        const descriptionArea = todo.querySelector('.description-text')
        descriptionArea.style.height = '1px'
        titleArea.style.height = '1px'
 
 
-        descriptionArea.setAttribute("style", "height:" + (descriptionArea.scrollHeight) + "px");
+        descriptionArea.setAttribute("style", "height:" + (descriptionArea.scrollHeight) + "px;overflow-y:hidden;");
         descriptionArea.addEventListener("input", onInput, false);
-        descriptionArea.addEventListener("resize", onInput, false);
+        window.addEventListener("resize", onInput, false);
 
 
         function onInput(e) {
-            this.style.height = "auto";
-            this.style.height = (this.scrollHeight) + "px";
+            descriptionArea.style.height = "auto";
+            descriptionArea.style.height = (descriptionArea.scrollHeight) + "px";
         }
 
         titleArea.classList.remove('nowrap')
@@ -473,6 +474,15 @@ const toDoController = (()=>{
         // if (descriptionArea.value.length == 0){
         //     descriptionArea.style.height= '3em'
         // }
+    }
+
+    function resizeTextArea(todo){
+        const textarea = todo.querySelector('textarea')
+        textarea.style.height = '1px'
+        textarea.style.height= textarea.scrollHeight+"px"
+        if (textarea.value.length == 0){
+            textarea.style.height= '3em'
+        }
     }
 
     const updateObject = (todo, currentObject) => {
