@@ -160,6 +160,23 @@ nav img{
     margin-left: 1em;
 }
 
+.sort {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5em;
+    gap: 1em;
+}
+
+.sort button{
+    background: var(--secondary-color);
+    font-family: var(--header-font);
+}
+
+.sort button:hover{
+    background: var(--button-color);
+    font-family: var(--header-font);
+}
+
 .content {
     grid-area: content;
     display: flex;

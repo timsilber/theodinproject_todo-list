@@ -1,4 +1,4 @@
-import { compareAsc, format, formatDistance, subDays, parseISO} from 'date-fns'
+import { compareAsc, format, formatDistance, subDays, parseISO, isFuture, isThisWeek} from 'date-fns'
 import './index.html'
 import './components/reset.css'
 import './components/fonts.css'
@@ -18,7 +18,7 @@ const Actions = {
 
 ToDo.prototype = Object.create(Actions)
 
-function ToDo(title, description = '', dueDate = '', priority = '', done='', createdAt=''){
+function ToDo(title, description = '', dueDate = null, priority = '', done='', createdAt=''){
 
     if (typeof Object.create !== 'function') {
         alert('YOU FORGOT TO USE NEW')
@@ -47,9 +47,21 @@ const trashList = (()=>{
         return true;
     }
 
-    const sortList = (criterion) => {
-        return list.sort((a,b)=>compareAsc(parseISO(a.criterion), parseISO(b.criterion)))
+    const sortList = () => {
+        
+        list.sort((a,b)=>{
+            console.log(a.dueDate, b.dueDate)
+            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+        })
     }
+
+    const sortListCreated = () => {
+        list.sort((a,b)=>{
+            console.log(a.createdAt, b.createdAt)
+            return a.createdAt - b.createdAt
+        })
+    }
+
 
     const getObject = (todo) =>{
         const createdAt = todo.querySelector('input[type|="hidden"]').value
@@ -110,7 +122,7 @@ const trashList = (()=>{
         });
     }
     
-    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains, getObject, sortList}
+    return {list, add, writeToLocalStorage, loadToDos, displayToDos, contains, getObject, sortList, sortListCreated}
 
 })();
 
@@ -129,9 +141,21 @@ const completedList = (()=> {
         return true;
     }
 
-    const sortList = (criterion) => {
-        return list.sort((a,b)=>compareAsc(parseISO(a.criterion), parseISO(b.criterion)))
+    const sortList = () => {
+        
+        list.sort((a,b)=>{
+            console.log(a.dueDate, b.dueDate)
+            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+        })
     }
+
+    const sortListCreated = () => {
+        list.sort((a,b)=>{
+            console.log(a.createdAt, b.createdAt)
+            return a.createdAt - b.createdAt
+        })
+    }
+
 
     const getObject = (todo) =>{
         const createdAt = todo.querySelector('input[type|="hidden"]').value
@@ -184,7 +208,7 @@ const completedList = (()=> {
         });
     }
 
-    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos, sortList}
+    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos, sortList, sortListCreated}
 })();
 
 const toDoList = (()=> {
@@ -202,8 +226,19 @@ const toDoList = (()=> {
         return true;
     }
 
-    const sortList = (criterion) => {
-        return list.sort((a,b)=>compareAsc(parseISO(a.criterion), parseISO(b.criterion)))
+   const sortList = () => {
+        
+        list.sort((a,b)=>{
+            console.log(a.dueDate, b.dueDate)
+            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+        })
+    }
+
+    const sortListCreated = () => {
+        list.sort((a,b)=>{
+            console.log(a.createdAt, b.createdAt)
+            return a.createdAt - b.createdAt
+        })
     }
 
     const getObject = (todo) =>{
@@ -244,7 +279,7 @@ const toDoList = (()=> {
         }
     }
 
-    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains, sortList}
+    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains, sortList, sortListCreated}
 })();
 
 //handles all DOM interactions with individual toDos
@@ -253,8 +288,8 @@ const toDoController = (()=>{
     const addToDOM = (() => {
         document.getElementById('new').onclick =()=>{
             const blankToDo = new ToDo('')
-            let datetime = new Date() 
-            datetime += datetime.getMilliseconds()
+            const date = new Date() 
+            const datetime = date.getTime()
             blankToDo.createdAt = datetime
 
             toDoList.add(blankToDo);
@@ -310,10 +345,11 @@ const toDoController = (()=>{
         return item
     }
 
-    const appendContent = (content) => {
+    const appendContent = (todo) => {
         const contentContainer = document.querySelector('.content')
-        contentContainer.insertBefore(content, contentContainer.firstChild);
-        handleUserInteraction(content);
+        contentContainer.insertBefore(todo, contentContainer.firstChild);
+        handleUserInteraction(todo);
+        setColor(todo)
     }
 
     const deleteToDo = (currentObject, todo) => {
@@ -402,7 +438,6 @@ const toDoController = (()=>{
         const deleteIcon = todo.querySelector('.delete')
         const checkbox = todo.querySelector('input[type|="checkbox')
         const restore = todo.querySelector('.restore')
-
 
         checkbox.addEventListener('change', (e) => {
         if (e.currentTarget.checked) {
@@ -494,6 +529,20 @@ const toDoController = (()=>{
         if (currentObject.dueDate){
             const daysLeft = formatDistance(parseISO(currentObject.dueDate), new Date(), { addSuffix: true })
             todo.querySelector('.days-left').innerHTML = daysLeft
+            setColor(todo);
+        }
+    }
+
+    const setColor = (todo) =>{
+        // const date = parseISO(todo.querySelector('input[type|="date"').value)
+        const daysColor = todo.querySelector('.days-left')
+        const daysText = daysColor.innerHTML
+        // const inAWeek = new Date(new Date().setDate(new Date().getDate() + 7)).getDate()
+
+        switch (true){
+            case (daysText.includes('ago') && daysText.includes('days')):
+                daysColor.style.color = '#e16162ff'
+                break
         }
     }
 
@@ -519,7 +568,7 @@ const toDoController = (()=>{
     return {toDoDOM, addToDOM, deleteToDo, unDeleteToDo, unCompleteToDo, completeToDo}
 })();
 
-const headerController = (() => {
+const viewController = (() => {
 
 const setHeader = (header) => {
     const currentTab= document.querySelector('.currentTab')
@@ -605,20 +654,40 @@ const handleDrop = (() => {
 
 })();
 
+const replaceSort = (listType) =>{
+    const due = document.getElementById('sort-due')
+    const created = document.getElementById('sort-created')
+
+
+    due.addEventListener('click', ()=>{
+        listType.sortList()
+        // console.table(toDoList.list)
+        listType.displayToDos(listType.list)
+    });
+
+    created.addEventListener('click', ()=>{
+        listType.sortListCreated()
+        console.table(listType.list)
+        listType.displayToDos(listType.list)
+    });
+} 
 
 document.getElementById('inbox').addEventListener('click', ()=> {
     toDoList.displayToDos(toDoList.list);
     setHeader(toDoList);
+    replaceSort(toDoList);
 })
 
 document.getElementById('completed').addEventListener('click', ()=> {
     completedList.displayToDos(completedList.list)
     setHeader(completedList);
+    replaceSort(completedList);
 })
 
 document.getElementById('trash').addEventListener('click', () => {
     trashList.displayToDos(trashList.list);
     setHeader(trashList);
+    replaceSort(trashList);
 })
 
 
@@ -643,12 +712,13 @@ const navListener = () => {
         });
 })};
 
-return {setHeader, navListener}
+return {setHeader, navListener, replaceSort}
 })();
 
 window.onload = () =>{
-    headerController.setHeader(toDoList);
-    headerController.navListener();
+    viewController.setHeader(toDoList);
+    viewController.navListener();
+    viewController.replaceSort(toDoList)
 
     toDoList.loadToDos();
     toDoList.displayToDos(toDoList.list);
