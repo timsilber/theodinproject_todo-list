@@ -121,17 +121,19 @@ body {
     background: var(--highlight-color);
     border-right: 2px solid var(--stroke);
     background-color: var(--secondary-color);
+    position: relative;
 }
 
 nav {
     margin-top: 1em;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--headline-text-color);
 }
 
 nav ul{
     display: flex;
     flex-direction: column;
+    gap: .3em;
 }
 
 nav ul div{
@@ -165,6 +167,7 @@ nav img{
     flex-direction: column;
     padding: 1.5em;
     gap: 1em;
+    margin-top: -.5em;
 }
 
 .sort button{
