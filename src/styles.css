@@ -209,6 +209,7 @@ nav img{
     padding: .5em;
     z-index: 1;
     transition: all .8s cubic-bezier(0.42, 0, 0.15, 1.4);
+    min-width: 350px;
 }
 
 .done{

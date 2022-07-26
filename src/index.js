@@ -354,7 +354,7 @@ const toDoController = (()=>{
         const contentContainer = document.querySelector('.content')
         contentContainer.insertBefore(todo, contentContainer.firstChild);
         handleUserInteraction(todo);
-        setColor(todo)
+        setColor(todo);
     }
 
     const deleteToDo = (currentObject, todo) => {
@@ -477,7 +477,7 @@ const toDoController = (()=>{
                     if (e2.target != description){
                         todo.draggable = true
                     }
-                })
+                });
             }
 
             todo.addEventListener('keyup', ()=>{
@@ -559,6 +559,10 @@ const toDoController = (()=>{
             case (daysText.includes('ago')):
                 daysColor.style.color = '#e16162ff'
                 break
+            case  (daysText.includes('in')):
+                daysColor.style.color = '#001858dd'
+                break
+
         }
     }
 
@@ -573,6 +577,7 @@ const toDoController = (()=>{
                     titleArea.classList.add('nowrap')
                     description.classList.remove('show');
                     meta.classList.remove('show');
+                    setColor(todo)
                     daysLeft.style.display = 'block'
                     updateObject(todo, currentObject);
                     toDoList.writeToLocalStorage(toDoList.list);
