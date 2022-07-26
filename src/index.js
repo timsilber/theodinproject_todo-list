@@ -545,7 +545,7 @@ const toDoController = (()=>{
         // const inAWeek = new Date(new Date().setDate(new Date().getDate() + 7)).getDate()
 
         switch (true){
-            case (daysText.includes('ago') && daysText.includes('days')):
+            case (daysText.includes('ago')):
                 daysColor.style.color = '#e16162ff'
                 break
         }
