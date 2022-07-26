@@ -32,6 +32,165 @@ function ToDo(title, description = '', dueDate = null, priority = '', done='', c
     this.createdAt = createdAt
 }
 
+const toDoList = (()=> {
+
+    const list = []
+
+    const add = (todo) => {
+        list.push(todo)
+    }
+
+    const contains = (object) => {
+        if (list.indexOf(object) < 0){
+            return false
+        }
+        return true;
+    }
+
+   const sortList = () => {
+        
+        list.sort((a,b)=>{
+            console.log(a.dueDate, b.dueDate)
+            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+        })
+        list.reverse()
+    }
+
+    const sortListCreated = () => {
+        list.sort((a,b)=>{
+            console.log(a.createdAt, b.createdAt)
+            return a.createdAt - b.createdAt
+        })
+    }
+
+    const getObject = (todo) =>{
+        const createdAt = todo.querySelector('input[type|="hidden"]').value
+        const todoObject= list.find(obj => (obj.createdAt == createdAt))
+        return todoObject
+    }
+
+    const writeToLocalStorage = () => {
+        localStorage.setItem("toDos", JSON.stringify(list));
+    }
+
+    const getFromLocalStorage = () => {
+        let storedNames = JSON.parse(localStorage.getItem("toDos"));
+        return storedNames
+    }
+
+    const loadToDos = () => {
+        let stringList = getFromLocalStorage();
+
+        if (!stringList){
+            console.log('inbox is empty')
+            return
+        }
+
+        for (let item of stringList){
+            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            add(stringToObject);
+        }
+    } 
+
+    const displayToDos = (list) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.innerHTML = ''
+        for (let item of list){
+            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoController.toDoDOM(objectFromString);
+        }
+    }
+
+    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains, sortList, sortListCreated}
+})();
+
+
+const completedList = (()=> {
+
+    const list = []
+
+    const add = (todo) => {
+        list.push(todo)
+    }
+
+    const contains = (object) => {
+        if (list.indexOf(object) < 0){
+            return false
+        }
+        return true;
+    }
+
+    const sortList = () => {
+        
+        list.sort((a,b)=>{
+            console.log(a.dueDate, b.dueDate)
+            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+        })
+        list.reverse()
+    }
+
+    const sortListCreated = () => {
+        list.sort((a,b)=>{
+            console.log(a.createdAt, b.createdAt)
+            return a.createdAt - b.createdAt
+        })
+    }
+
+
+    const getObject = (todo) =>{
+        const createdAt = todo.querySelector('input[type|="hidden"]').value
+        const todoObject= list.find(obj => (obj.createdAt == createdAt))
+        return todoObject
+    }
+
+    const writeToLocalStorage = () => {
+        localStorage.setItem("completed", JSON.stringify(list));
+    }
+
+    const getFromLocalStorage = () => {
+        let storedNames = JSON.parse(localStorage.getItem("completed"));
+        return storedNames
+    }
+
+    const loadToDos = () => {
+        let stringList = getFromLocalStorage();
+
+        if (!stringList){
+            console.log('completed list is empty')
+            return
+        }
+
+        for (let item of stringList){
+            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            add(stringToObject);
+        }
+    } 
+
+    const displayToDos = (list) => {
+        const contentContainer = document.querySelector('.content')
+        contentContainer.innerHTML = ''
+        
+        for (let item of list){
+            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
+            toDoController.toDoDOM(objectFromString);
+        }
+
+        const completedToDos = [...document.querySelectorAll('.todo')]
+        completedToDos.forEach((todo) => {
+            todo.querySelector('input[type|="checkbox"').checked = true
+            todo.querySelector('.description-text').readOnly = true
+            todo.querySelector('.title-text').readOnly = true
+            todo.querySelector('input[type|="date"').disabled = true
+            todo.querySelector('.delete').style.display = 'none'
+
+            todo.classList.add('completed')
+
+        });
+    }
+
+    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos, sortList, sortListCreated}
+})();
+
 const trashList = (()=>{
 
     const list = []
@@ -53,6 +212,7 @@ const trashList = (()=>{
             console.log(a.dueDate, b.dueDate)
             return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
         })
+        list.reverse()
     }
 
     const sortListCreated = () => {
@@ -126,161 +286,6 @@ const trashList = (()=>{
 
 })();
 
-const completedList = (()=> {
-
-    const list = []
-
-    const add = (todo) => {
-        list.push(todo)
-    }
-
-    const contains = (object) => {
-        if (list.indexOf(object) < 0){
-            return false
-        }
-        return true;
-    }
-
-    const sortList = () => {
-        
-        list.sort((a,b)=>{
-            console.log(a.dueDate, b.dueDate)
-            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
-        })
-    }
-
-    const sortListCreated = () => {
-        list.sort((a,b)=>{
-            console.log(a.createdAt, b.createdAt)
-            return a.createdAt - b.createdAt
-        })
-    }
-
-
-    const getObject = (todo) =>{
-        const createdAt = todo.querySelector('input[type|="hidden"]').value
-        const todoObject= list.find(obj => (obj.createdAt == createdAt))
-        return todoObject
-    }
-
-    const writeToLocalStorage = () => {
-        localStorage.setItem("completed", JSON.stringify(list));
-    }
-
-    const getFromLocalStorage = () => {
-        let storedNames = JSON.parse(localStorage.getItem("completed"));
-        return storedNames
-    }
-
-    const loadToDos = () => {
-        let stringList = getFromLocalStorage();
-
-        if (!stringList){
-            console.log('completed list is empty')
-            return
-        }
-
-        for (let item of stringList){
-            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            add(stringToObject);
-        }
-    } 
-
-    const displayToDos = (list) => {
-        const contentContainer = document.querySelector('.content')
-        contentContainer.innerHTML = ''
-        
-        for (let item of list){
-            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            toDoController.toDoDOM(objectFromString);
-        }
-
-        const completedToDos = [...document.querySelectorAll('.todo')]
-        completedToDos.forEach((todo) => {
-            todo.querySelector('input[type|="checkbox"').checked = true
-            todo.querySelector('.description-text').readOnly = true
-            todo.querySelector('.title-text').readOnly = true
-            todo.querySelector('input[type|="date"').disabled = true
-            todo.querySelector('.delete').style.display = 'none'
-
-            todo.classList.add('completed')
-
-        });
-    }
-
-    return {add, list, getObject, writeToLocalStorage, loadToDos, contains, displayToDos, sortList, sortListCreated}
-})();
-
-const toDoList = (()=> {
-
-    const list = []
-
-    const add = (todo) => {
-        list.push(todo)
-    }
-
-    const contains = (object) => {
-        if (list.indexOf(object) < 0){
-            return false
-        }
-        return true;
-    }
-
-   const sortList = () => {
-        
-        list.sort((a,b)=>{
-            console.log(a.dueDate, b.dueDate)
-            return compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
-        })
-    }
-
-    const sortListCreated = () => {
-        list.sort((a,b)=>{
-            console.log(a.createdAt, b.createdAt)
-            return a.createdAt - b.createdAt
-        })
-    }
-
-    const getObject = (todo) =>{
-        const createdAt = todo.querySelector('input[type|="hidden"]').value
-        const todoObject= list.find(obj => (obj.createdAt == createdAt))
-        return todoObject
-    }
-
-    const writeToLocalStorage = () => {
-        localStorage.setItem("toDos", JSON.stringify(list));
-    }
-
-    const getFromLocalStorage = () => {
-        let storedNames = JSON.parse(localStorage.getItem("toDos"));
-        return storedNames
-    }
-
-    const loadToDos = () => {
-        let stringList = getFromLocalStorage();
-
-        if (!stringList){
-            console.log('inbox is empty')
-            return
-        }
-
-        for (let item of stringList){
-            const stringToObject = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            add(stringToObject);
-        }
-    } 
-
-    const displayToDos = (list) => {
-        const contentContainer = document.querySelector('.content')
-        contentContainer.innerHTML = ''
-        for (let item of list){
-            const objectFromString = new ToDo(item.title, item.description, item.dueDate, item.priority, item.done, item.createdAt)
-            toDoController.toDoDOM(objectFromString);
-        }
-    }
-
-    return {add, list, getObject, writeToLocalStorage, loadToDos, displayToDos, contains, sortList, sortListCreated}
-})();
 
 //handles all DOM interactions with individual toDos
 const toDoController = (()=>{
