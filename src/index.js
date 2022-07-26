@@ -465,15 +465,26 @@ const toDoController = (()=>{
             const trashIcon = todo.querySelector('.delete')
             const restore = todo.querySelector('.restore')
             const noExpand = [checkbox, trashIcon, restore]
+            const description = todo.querySelector('.description-text')
 
             if (noExpand.every((item) => e.target != item)){
                 expandToDo(todo, e.target);
-
             }
+
+            if (e.target === description && description === document.activeElement){
+                todo.draggable = false
+                todo.addEventListener('click', (e2)=>{
+                    if (e2.target != description){
+                        todo.draggable = true
+                    }
+                })
+            }
+
             todo.addEventListener('keyup', ()=>{
                     updateObject(todo, currentObject)
                     setTimeout(toDoList.writeToLocalStorage(), 1000)
                 })
+            
             collapseToDo(todo, currentObject);
         });
 
