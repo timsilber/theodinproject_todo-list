@@ -1,6 +1,9 @@
 # *listless*
 
-*listless* is a strongly-typed, minimalist todo list app.
+*listless* is a strongly-typed, minimalist todo list app. 
+
+>You can access the most recent version of *listless* via [GitHub pages](https://timsilber.github.io/theodinproject_todo-list/). 
+
 
 Todos contain a title, description, due date, and priority. To create a new todo, select **Add to inbox**.
 
