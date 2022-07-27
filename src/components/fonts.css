@@ -31,3 +31,8 @@
 }
 
 @import url("https://use.typekit.net/wlh2kkl.css");
+
+@font-face {
+	font-family: 'operator-mono';
+	src: url(./Operator-Mono/Fonts/OperatorMono-MediumItalic.otf) format("opentype");
+}

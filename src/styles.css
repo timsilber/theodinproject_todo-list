@@ -23,6 +23,8 @@ div{
 
 h1, h2, h3, h4, h5 {
     font-family: var(--header-font);
+    color: var(--headline-text-color);
+
 }
 
 h1 {
@@ -57,7 +59,7 @@ body {
     margin: 0;
     height: 100vh;
     display: grid;
-    grid-template-rows: 90px 1fr 9fr;
+    grid-template-rows: 77px 1fr 9fr;
     grid-template-columns: minmax(220px,1fr) 5fr;
     grid-template-areas: 
     "banner banner"
@@ -74,15 +76,22 @@ body {
     /* box-shadow: #00185829 0px 2px 8px 0px; */
     z-index: 1;
     border-bottom: 2px solid var(--stroke);
-    display: grid;
 }
 
 .banner img {
-    height: 75px;
-    margin-left: 1em;
-    margin-top: .5em;
-    margin-bottom: .5em;
+    height: 66px;
+    margin-left: .5em;
+    align-self: flex-end;
     cursor: pointer;
+}
+
+.banner h1 {
+    justify-self: flex-end;
+    align-self: flex-end;
+    margin-left: .2em;
+    margin-bottom: .2em;
+    font-size: 2.9rem;
+    font-family: 'operator-mono';
 }
 
 .header {
@@ -545,5 +554,88 @@ select {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-
   }
+
+  .hide{
+    display:none;
+  }
+
+  .repaint{
+    grid-template-areas:     
+    "banner banner"
+    "header header"
+    "content content"
+  }
+
+@media screen and (max-width: 600px) {
+    body, html{
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        grid-template-rows: 77px 1fr 8fr 1fr;
+        grid-template-areas:     
+        "banner banner"
+        "header header"
+        "content content"
+        "sidebar sidebar";
+
+    }
+
+    .sidebar{
+        border-top: 3px solid var(--stroke);
+        border-right: 0;
+        position: sticky;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        bottom: 0;
+        box-shadow: #00185829 10px 2px 8px 0px;
+
+    }
+    nav {
+        margin-top: 1em;
+        font-size: 1.4rem;
+        color: var(--headline-text-color);
+    }
+
+    nav ul{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 0em;
+        /* padding: 0 1em; */
+    }
+
+    nav ul div {
+        padding: .5em;
+        border: 1px solid transparent;
+    }
+
+    nav ul div:hover{
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--stroke);
+        border-radius: .4em;
+        background: var(--highlight-color);
+    }
+    
+    nav ul div:-moz-drag-over{
+        display: flex;
+        align-items: center;
+        background: var(--highlight-color);
+    }
+    
+    nav img{
+        width: 30px;
+        margin-right: .5em;
+        margin-left: 0em;
+    }
+
+    .sort{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+}

@@ -733,6 +733,25 @@ const navListener = () => {
         });
 })};
 
+const displayNav =(() => {
+    const sidebar = document.querySelector('.sidebar')
+    const mascotIcon = document.querySelector('.banner img')
+    
+    mascotIcon.addEventListener('click', ()=> {
+        sidebar.classList.toggle('hide')
+        document.body.classList.toggle('repaint')
+        console.log('hi')
+    })
+
+    // const appName = document.querySelector('.banner h1')
+    // appName.addEventListener('click', ()=> {
+    //     sidebar.classList.toggle('hide')
+    //     document.body.classList.toggle('repaint')
+    //     console.log('hi')
+    // })
+    
+})();
+
 return {setHeader, navListener, replaceSort}
 })();
 
