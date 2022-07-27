@@ -65,6 +65,7 @@ body {
     "banner banner"
     "sidebar header"
     "sidebar content";
+    background: var(--highlight-color);
 }
 
 .banner {
@@ -567,7 +568,7 @@ select {
     "content content"
   }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
     body, html{
         margin: 0;
         padding: 0;
@@ -579,7 +580,6 @@ select {
         "header header"
         "content content"
         "sidebar sidebar";
-
     }
 
     .sidebar{
@@ -591,6 +591,7 @@ select {
         z-index: 99;
         bottom: 0;
         box-shadow: #00185829 10px 2px 8px 0px;
+        padding: 0 .5em;
 
     }
     nav {
@@ -604,6 +605,7 @@ select {
         flex-direction: row;
         justify-content: space-around;
         gap: 0em;
+        font-size: 1.3rem;
         /* padding: 0 1em; */
     }
 
@@ -636,6 +638,7 @@ select {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
+        padding: 1em 1em;
     }
     
 }
