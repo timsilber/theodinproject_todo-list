@@ -713,7 +713,9 @@ document.getElementById('trash').addEventListener('click', () => {
 
 
 const navListener = () => {
-    const navItems = [...document.querySelectorAll('.sidebar ul div')]
+    const sidebar = document.querySelector('.sidebar')
+    const navItems = [...sidebar.querySelectorAll('ul div')]
+    const hamburger = document.querySelector('.hamburger')
    
     navItems.forEach((item) => {
 
@@ -731,6 +733,14 @@ const navListener = () => {
                 item.classList.remove('drop')
             });
         });
+
+    hamburger.addEventListener('click', () =>{
+        hamburger.classList.toggle('active')
+        sidebar.classList.toggle('active')
+
+        
+    })
+
 })};
 
 const displayNav =(() => {
