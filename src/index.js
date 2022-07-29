@@ -181,8 +181,8 @@ const completedList = (()=> {
             todo.querySelector('.description-text').readOnly = true
             todo.querySelector('.title-text').readOnly = true
             todo.querySelector('input[type|="date"').disabled = true
+            todo.querySelector('select').disabled = true
             todo.querySelector('.delete').style.display = 'none'
-
             todo.classList.add('completed')
 
         });
@@ -271,6 +271,8 @@ const trashList = (()=>{
             todo.querySelector('input[type|="date"').disabled = true
             todo.querySelector('.delete').style.display = 'none'
             todo.querySelector('.days-left').style.display = 'none'
+            todo.querySelector('select').disabled = true
+
             
             checkbox.disabled = true
             checkbox.style.opacity = .3
@@ -678,38 +680,26 @@ const handleDrop = (() => {
 const replaceSort = (listType) =>{
     const due = document.getElementById('sort-due')
     const created = document.getElementById('sort-created')
+    const hamburger = document.querySelector('.hamburger')
+    const sidebar = document.querySelector('.sidebar')
+
 
 
     due.addEventListener('click', ()=>{
         listType.sortList()
-        // console.table(toDoList.list)
         listType.displayToDos(listType.list)
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
+        
     });
 
     created.addEventListener('click', ()=>{
         listType.sortListCreated()
-        console.table(listType.list)
         listType.displayToDos(listType.list)
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
     });
 } 
-
-document.getElementById('inbox').addEventListener('click', ()=> {
-    toDoList.displayToDos(toDoList.list);
-    setHeader(toDoList);
-    replaceSort(toDoList);
-})
-
-document.getElementById('completed').addEventListener('click', ()=> {
-    completedList.displayToDos(completedList.list)
-    setHeader(completedList);
-    replaceSort(completedList);
-})
-
-document.getElementById('trash').addEventListener('click', () => {
-    trashList.displayToDos(trashList.list);
-    setHeader(trashList);
-    replaceSort(trashList);
-})
 
 
 const navListener = () => {
@@ -735,10 +725,32 @@ const navListener = () => {
         });
 
     hamburger.addEventListener('click', () =>{
-        hamburger.classList.toggle('active')
-        sidebar.classList.toggle('active')
+        hamburger.classList.toggle('active');
+        sidebar.classList.toggle('active');        
+    })
 
-        
+    document.getElementById('inbox').addEventListener('click', ()=> {
+        toDoList.displayToDos(toDoList.list);
+        setHeader(toDoList);
+        replaceSort(toDoList);
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
+    })
+    
+    document.getElementById('completed').addEventListener('click', ()=> {
+        completedList.displayToDos(completedList.list)
+        setHeader(completedList);
+        replaceSort(completedList);
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
+    })
+    
+    document.getElementById('trash').addEventListener('click', () => {
+        trashList.displayToDos(trashList.list);
+        setHeader(trashList);
+        replaceSort(trashList);
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
     })
 
 })};
@@ -750,7 +762,6 @@ const displayNav =(() => {
     mascotIcon.addEventListener('click', ()=> {
         sidebar.classList.toggle('hide')
         document.body.classList.toggle('repaint')
-        console.log('hi')
     })
 
     // const appName = document.querySelector('.banner h1')
